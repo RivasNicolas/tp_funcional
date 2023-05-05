@@ -1,41 +1,5 @@
-module iap1-tp where
--- Completar con los datos del grupo
---
--- Nombre de Grupo: Cambalache
--- Integrante 1: Ezequiel Juan Fernández, ezequieljuanfernandez2003@gmail.com, 774/23
--- Integrante 2: Tomas Benjamin Ramirez, rtb.fcen@gmail.com, 530/23
--- Integrante 3: Nicolás Rivas, nicolas@rivasgarcia.com.ar, 321/23
--- Integrante 4: Juan Ignacio Villalba, juaninator360@gmail.com, 759/23
-
-type Usuario = (Integer, String) -- (id, nombre)
-type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
-type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
-type RedSocial = ([Usuario], [Relacion], [Publicacion])
-
--- Funciones basicas
-
-usuarios :: RedSocial -> [Usuario]
-usuarios (us, _, _) = us
-
-relaciones :: RedSocial -> [Relacion]
-relaciones (_, rs, _) = rs
-
-publicaciones :: RedSocial -> [Publicacion]
-publicaciones (_, _, ps) = ps
-
-idDeUsuario :: Usuario -> Integer
-idDeUsuario (id, _) = id 
-
-nombreDeUsuario :: Usuario -> String
-nombreDeUsuario (_, nombre) = nombre 
-
-usuarioDePublicacion :: Publicacion -> Usuario
-usuarioDePublicacion (u, _, _) = u
-
-likesDePublicacion :: Publicacion -> [Usuario]
-likesDePublicacion (_, _, us) = us
-
--- Ejercicios
+module Solucion where
+import TP
 
 -- Devuelve los nombres de usuarios en una lista: ["nombre1", "nombre2", ...]
 nombresDeUsuarios :: RedSocial -> [String]
