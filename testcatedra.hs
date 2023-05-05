@@ -28,6 +28,8 @@ tests = test [
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
 
 -- Ejemplos
+--nombresDeUsuarios :: RedSocial -> [String]
+--nombresDeUsuarios :: RedSocial -> [String]
 
 usuario1 = (1, "Juan")
 usuario2 = (2, "Natalia")
