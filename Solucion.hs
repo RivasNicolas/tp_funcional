@@ -2,12 +2,12 @@ module Solucion where
 import TP
     
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios rs = [nombresDeUsuarios' (usuarios rs)]
+nombresDeUsuarios rs = nombresDeUsuarios' (usuarios rs)
 
-nombresDeUsuarios' :: [Usuario] -> String
-nombresDeUsuarios' [] = ""
-nombresDeUsuarios' [u] = nombreDeUsuario u
-nombresDeUsuarios' (u:us) = nombreDeUsuario u ++ " " ++ nombresDeUsuarios' us
+nombresDeUsuarios' :: [Usuario] -> [String]
+nombresDeUsuarios' [] = []
+nombresDeUsuarios' [u] = [nombreDeUsuario u]
+nombresDeUsuarios' (u:us) = [nombreDeUsuario u] ++ nombresDeUsuarios' us
 
 -- describir qué hace la función: .....
 amigosDe :: RedSocial -> Usuario -> [Usuario]
