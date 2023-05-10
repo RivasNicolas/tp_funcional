@@ -1,4 +1,4 @@
-module TP where
+module iap1-tp where
 -- Completar con los datos del grupo
 --
 -- Nombre de Grupo: Cambalache
@@ -37,12 +37,29 @@ likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
 
+-- Devuelve los nombres de usuarios en una lista: ["nombre1", "nombre2", ...]
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios = undefined
+nombresDeUsuarios rs = nombresDeUsuarios' (usuarios rs)
 
--- describir qué hace la función: .....
+nombresDeUsuarios' :: [Usuario] -> [String]
+nombresDeUsuarios' []     = []
+nombresDeUsuarios' [u]    = [nombreDeUsuario u]
+nombresDeUsuarios' (u:us) = [nombreDeUsuario u] ++ nombresDeUsuarios' us
+
+-- Duevuelve una lista de usuarios que estan relacionados con un usuario especifico.
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe = undefined
+amigosDe rs usuario = amigosDe' (relaciones rs) usuario
+
+amigosDe' :: [Relacion] -> Usuario -> [Usuario]
+amigosDe' [] _ = []
+amigosDe' ((u1,u2):[]) usuario
+    | usuario == u1 = [u2]
+    | usuario == u2 = [u1]
+    | otherwise     = []
+amigosDe' ((u1,u2):rs) usuario
+    | usuario == u1 = [u2] ++ amigosDe' rs usuario
+    | usuario == u2 = [u1] ++ amigosDe' rs usuario
+    | otherwise     = amigosDe' rs usuario
 
 -- describir qué hace la función: .....
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
