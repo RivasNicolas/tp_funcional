@@ -113,13 +113,28 @@ comparadorDeAmigos _ [x] = x
 comparadorDeAmigos rs (x:xs) | (cantidadDeAmigos rs x) >= cantidadDeAmigos rs (comparadorDeAmigos rs xs) = x
                              | otherwise = comparadorDeAmigos rs xs
 
--- describir qué hace la función: .....
+-- Determina si es que hay un usuario en la red social que tenga más de 10 amigos exactamente .....
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
+estaRobertoCarlos rs = estaRobertoCarlosAux rs (usuarios rs)
 
--- describir qué hace la función: .....
+--Funcion auxiliar para que cuente si la cantidad de amigos de cada usuario es mayor a 10
+estaRobertoCarlosAux :: RedSocial -> [Usuario] -> Bool
+estaRobertoCarlosAux rs us | us == [] = False
+                           | cantidadDeAmigos rs (head us) > 10 = True
+                           | otherwise = estaRobertoCarlosAux rs (tail us)
+
+-- Toma un RedSocial un Usuario u y devuelve un [Publicacion]
+-- de red social en las que u es el autor de cada Publicacion 
+-- de [Publicacion]
+-- Es decir, publicaciones escritas por u
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
+publicacionesDe rsRed uUsuario = eliminarRepetidos(publicacionesDe' (publicaciones rsRed) uUsuario)
+
+publicacionesDe' :: [Publicacion] -> Usuario -> [Publicacion]
+publicacionesDe' [] _ = []
+publicacionesDe' (p:ps) uUsuario
+    | uUsuario == usuarioDePublicacion p = p:publicacionesDe' ps uUsuario
+    | otherwise                          = publicacionesDe' ps uUsuario
 
 -- Toma un RedSocial, un Usuario y devuelve un [Publicacion], este lo devuelve la función auxiliar.
 -- Obtiene todas las publicaciones de la red y se lo envía a la función auxiliar junto al usuario.
