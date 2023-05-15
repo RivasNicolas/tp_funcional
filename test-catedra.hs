@@ -3,6 +3,8 @@ import Solucion
 
 main = runTestTT tests
 
+-- Todos los tests que incluyen un 1 en su nombre, venían con la consigna
+
 tests = test [
     " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
 
@@ -22,7 +24,17 @@ tests = test [
 
     " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redA usuario1) ~?= True,
 
-    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
+    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True,
+    --" nombresDeUsuarios" ~: testsEj1,
+    " amigosDe" ~: testsEj2,
+    " cantidadDeAmigos" ~: testsEj3,
+    " usuarioConMasAmigos" ~: testsEj4,
+    " estaRobertoCarlos" ~: testsEj5,
+    " publicacionesDe" ~: testsEj6
+    --" publicacionesQueLeGustanA" ~: testsEj7,
+    --" leGustanLasMismasPublicaciones" ~: testsEj8,
+    --" tieneUnSeguidorFiel" ~: testsEj9,
+    --" existeSecuenciaDeAmigos" ~: testsEj10
  ]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
@@ -71,3 +83,85 @@ usuariosB = [usuario1, usuario2, usuario3, usuario5]
 relacionesB = [relacion1_2, relacion2_3]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
+
+-- Test realizados por nosotros --
+testsEj2 = test [
+    --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 2: red tiene relaciones que no contienen a u. Red contiene a u." ~: amigosDe red2 usuario_2_4 ~?= [],
+    "Caso 3: red tiene relaciones no repetidas y contiene a u." ~: amigosDe red2 usuario_2_1 ~?= [usuario_2_2, usuario_2_3],
+    --"Caso 4: red tiene relaciones repetidas y contiene a u." No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 5: red no tiene relaciones. Red contiene a u." ~: amigosDe red2SinRelaciones usuario_2_2 ~?= []
+    ]
+usuario_2_1 = (1, "Juan Ignacio")
+usuario_2_2 = (2, "Ezequiel")
+usuario_2_3 = (3, "Benjamin")
+usuario_2_4 = (4, "Roberto Carlos")
+usuarios2 = [usuario_2_1, usuario_2_2, usuario_2_3, usuario_2_4]
+relacion2_12 = (usuario_2_1, usuario_2_2)
+relacion2_31 = (usuario_2_3, usuario_2_1)
+relaciones2 = [relacion2_12, relacion2_31]
+red2 = (usuarios2, relaciones2, [])
+red2SinRelaciones = (usuarios2, [], [])
+
+testsEj3 = test [
+    --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 2: red tiene relaciones que no contienen a u. Red contiene a u." ~: cantidadDeAmigos red2 usuario_2_4 ~?= 0,
+    "Caso 3: red tiene relaciones no repetidas y contiene a u." ~: cantidadDeAmigos red2 usuario_2_1 ~?= 2,
+    --"Caso 4: red tiene relaciones repetidas y contiene a u." No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 5: red no tiene relaciones. Red contiene a u." ~: cantidadDeAmigos red2SinRelaciones usuario_2_2 ~?= 0
+    ]
+
+testsEj4 = test [
+    --"Caso 1: la cantidad de usuarios de la red es 0"  No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 2: la cantidad de usuarios de la red es mayor a 1 y red no tiene relaciones" ~: usuarioConMasAmigos red2SinRelaciones ~?= usuario_2_1,
+    "Caso 3: la cantidad de usuarios de la red es mayor a 1 y red tiene relaciones, ninguna repetida" ~: usuarioConMasAmigos red2 ~?= usuario_2_1
+    --"Caso 4: la cantidad de usuarios de la red es mayor a 1 y red tiene relaciones, con repetidas" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    ]
+
+testsEj5 = test [
+    "Caso 1: La cantidad máxima de amigos de un usuario es menor a 10." ~: estaRobertoCarlos red2SinRelaciones ~?= False,
+    "Caso 2: La cantidad máxima de amigos de un usuario es 10." ~: estaRobertoCarlos red5SinRobertoCarlos ~?= False,
+    "Caso 3: La cantidad máxima de amigos de un usuario es mayor a 10." ~: estaRobertoCarlos red5ConRobertoCarlos ~?= True
+    ]
+usuario_5_5 = (5, "Javier")
+usuario_5_6 = (6, "Gabriel")
+usuario_5_7 = (7, "Franco")
+usuario_5_8 = (8, "Mariela")
+usuario_5_9 = (9, "Natalia")
+usuario_5_10 = (10, "Liliana")
+usuario_5_11 = (11, "Miguel")
+usuario_5_12 = (12, "Eda")
+usuarios5 = [usuario_2_1, usuario_2_2, usuario_2_3, usuario_2_4, usuario_5_5, usuario_5_6, usuario_5_7, usuario_5_8, usuario_5_9, usuario_5_10, usuario_5_11, usuario_5_12]
+relacion_5_41 = (usuario_2_4, usuario_2_1)
+relacion_5_42 = (usuario_2_4, usuario_2_2)
+relacion_5_43 = (usuario_2_4, usuario_2_3)
+relacion_5_45 = (usuario_2_4, usuario_5_5)
+relacion_5_46 = (usuario_2_4, usuario_5_6)
+relacion_5_47 = (usuario_2_4, usuario_5_7)
+relacion_5_48 = (usuario_2_4, usuario_5_8)
+relacion_5_49 = (usuario_2_4, usuario_5_9)
+relacion_5_410 = (usuario_2_4, usuario_5_10)
+relacion_5_411 = (usuario_2_4, usuario_5_11)
+relacion_5_412 = (usuario_2_4, usuario_5_12)
+relaciones5Con10Amigos = [relacion_5_41, relacion_5_42, relacion_5_43, relacion_5_45, relacion_5_46, relacion_5_47, relacion_5_48, relacion_5_49, relacion_5_410, relacion_5_411]
+relaciones5Con11Amigos = [relacion_5_41, relacion_5_42, relacion_5_43, relacion_5_45, relacion_5_46, relacion_5_47, relacion_5_48, relacion_5_49, relacion_5_410, relacion_5_411
+                         , relacion_5_412]
+red5SinRobertoCarlos = (usuarios5, relaciones5Con10Amigos, [])
+red5ConRobertoCarlos = (usuarios5, relaciones5Con11Amigos, [])
+
+testsEj6 = test [
+    --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 2: red no tiene publicaciones" ~: publicacionesDe red5ConRobertoCarlos usuario_2_4 ~?= [],
+    "Caso 3: red tiene publicaciones y u no." ~: publicacionesDe red6 usuario_2_3 ~?= [],
+    --"Caso 4: red tiene publicaciones y u tiene repetidas" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 5: red tiene publicaciones y u tiene, sin repetidas" ~: publicacionesDe red6 usuario_2_1 ~?= [publicacion6_1, publicacion6_2, publicacion6_3, publicacion6_4, publicacion6_5]
+    ]
+publicacion6_1 = (usuario_2_1, "Este es mi primer post", [usuario_2_2, usuario_2_3, usuario_2_4])
+publicacion6_2 = (usuario_2_1, "Este es mi segundo post", [usuario_2_2, usuario_2_3, usuario_2_4])
+publicacion6_3 = (usuario_2_1, "Este es mi tercer post", [usuario_2_2])
+publicacion6_4 = (usuario_2_1, "Este es mi cuarto post", [usuario_2_2])
+publicacion6_5 = (usuario_2_1, "Este es como mi quinto post", [usuario_2_2])
+publicacion6_6 = (usuario_2_4, "Hola red", [usuario_2_1])
+publicacion6_7 = (usuario_2_2, "Hello world", [])
+publicaciones6 = [publicacion6_1, publicacion6_2, publicacion6_3, publicacion6_4, publicacion6_5, publicacion6_6, publicacion6_7]
+red6 = (usuarios2, relaciones2, publicaciones6)
