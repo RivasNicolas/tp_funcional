@@ -155,8 +155,11 @@ publicacionesQueLeGustanAAux (pub : pubs) us | pertenece us (likesDePublicacion 
 -- A ambos les gustan las mismas publicaciones si la lista de publicaciones que le gustan al usuario1 está incluida en la lista de publicaciones que le gustan al usuario2,
 -- y si la lista de publicaciones que le gustan al usuario2 está incluida en la lista de publicaciones que le gustan al usuario1
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones rsRed us1 us2 = esSubconjunto (publicacionesQueLeGustanA rsRed us1) (publicacionesQueLeGustanA rsRed us2) &&
-                                                esSubconjunto (publicacionesQueLeGustanA rsRed us2) (publicacionesQueLeGustanA rsRed us1)
+lesGustanLasMismasPublicaciones rsRed us1 us2 = lesGustanLasMismasPublicacionesAux (publicacionesQueLeGustanA rsRed us1) (publicacionesQueLeGustanA rsRed us2)
+    
+lesGustanLasMismasPublicacionesAux :: [Publicacion] -> [Publicacion] -> Bool    
+lesGustanLasMismasPublicacionesAux [] [] = True 
+lesGustanLasMismasPublicacionesAux likesUs1 likesUs2 = esSubconjunto likesUs1 likesUs2 && esSubconjunto likesUs2 likesUs1
 
 -- Toma un RedSocial y un usuario, y verifica que existe un Usuario u1 tal que:
 -- u1 pertenece a todas las listas de usuarios de las publicaciones de otro
