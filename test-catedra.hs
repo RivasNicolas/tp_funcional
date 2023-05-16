@@ -30,9 +30,9 @@ tests = test [
     " cantidadDeAmigos" ~: testsEj3,
     " usuarioConMasAmigos" ~: testsEj4,
     " estaRobertoCarlos" ~: testsEj5,
-    " publicacionesDe" ~: testsEj6
-    --" publicacionesQueLeGustanA" ~: testsEj7,
-    --" leGustanLasMismasPublicaciones" ~: testsEj8,
+    " publicacionesDe" ~: testsEj6,
+    " publicacionesQueLeGustanA" ~: testsEj7,
+    " leGustanLasMismasPublicaciones" ~: testsEj8
     --" tieneUnSeguidorFiel" ~: testsEj9,
     --" existeSecuenciaDeAmigos" ~: testsEj10
  ]
@@ -165,3 +165,19 @@ publicacion6_6 = (usuario_2_4, "Hola red", [usuario_2_1])
 publicacion6_7 = (usuario_2_2, "Hello world", [])
 publicaciones6 = [publicacion6_1, publicacion6_2, publicacion6_3, publicacion6_4, publicacion6_5, publicacion6_6, publicacion6_7]
 red6 = (usuarios2, relaciones2, publicaciones6)
+
+testsEj7 = test [
+    --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 2: red no tiene publicaciones" ~: publicacionesQueLeGustanA red5ConRobertoCarlos usuario_2_4 ~?= [],
+    "Caso 3: red tiene publicaciones y a u no le gusta ninguna" ~: publicacionesQueLeGustanA redB usuario1 ~?= [],
+    "Caso 4: Caso 4: red tiene publicaciones y a u le gusta alguna" ~: publicacionesQueLeGustanA redB usuario2 ~?= [publicacion1_3, publicacion3_2, publicacion3_3]
+    ]
+
+testsEj8 = test[
+    --"Caso 1: red no contiene a u1 o u2" No se testea porque se trata de un caso de error. No está especificado qué sucede.
+    "Caso 2: red no tiene publicaciones" ~: lesGustanLasMismasPublicaciones red5ConRobertoCarlos usuario_2_2 usuario_2_4 ~?= True,
+    "Caso 3: red tiene publicaciones y ni a u1 ni a u2 le gusta ninguna" ~: lesGustanLasMismasPublicaciones redB usuario1 usuario3 ~?= True,
+    "Caso 4: red tiene publicaciones y uno solo de los dos usuarios tiene publicaciones que le gustan, mientras el otro no tiene ninguna" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario1 ~?= False,
+    "Caso 5: red tiene publicaciones y ambos usuarios tienen publicaciones que les gustan en común pero, también tienen algunas que les gustan a ellos solos" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario5 ~?= False,
+    "Caso 6: red tiene publicaciones y a u1 y u2 les gustan todas las mismas" ~: lesGustanLasMismasPublicaciones red6 usuario_2_3 usuario_2_4 ~?= True
+    ]
