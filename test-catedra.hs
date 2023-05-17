@@ -260,8 +260,7 @@ redTestEJ10I_P4 = (usuariosTestEJ10I_P4, relacionesTestEJ10I, [])
 redTestEJ10I_P5 = (usuariosTestEJ10I_P5, relacionesTestEJ10I, [])
 redTestEJ10I_P6 = (usuariosTestEJ10I_P6, relacionesTestEJ10I, [])
 
-testExisteSecuenciaDeAmigos = runTestTT testEJ10
-testEJ10 = test [
+testEj10 = test [
     "Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
     "Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
     "Caso 3: 1001 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10C usuario1000 usuario1001 ~?= False,

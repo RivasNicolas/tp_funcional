@@ -163,26 +163,10 @@ existeSecuenciaDeAmigos' us uU1 uU2 rsRed
     | pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed) == False = False
     | otherwise               = cadenaDeAmigos uU1 uU2 us rsRed
 
--- Toma un elemento t y una lista [t] y :
--- Si el elemento t existe en la lista, toma el elemento mas a la izquierda de la lista y lo mueve al principio
--- Si el elemento t no existe en la lista, agrega t al principio de la lista.
--- ## MARCADA PARA ELIMINAR ## --
-moverAlPrincipio :: (Eq t) => t -> [t] -> [t]
-moverAlPrincipio x []     = [x]
-moverAlPrincipio x (y:ys) = x:quitar x (y:ys)
-
 -- Devuelve el último elemento de una lista
 ultimoElem :: (Eq t) => [t] -> t
 ultimoElem [x] = x
 ultimoElem (x:xs) = ultimoElem xs
-
--- Toma un elemento t y una lista [t] y :
--- Si el elemento t existe en la lista, toma el elemento mas a la izquierda de la lista y lo mueve al fondo
--- Si el elemento t no existe en la lista, agrega t al final de la lista.
--- ## MARCADA PARA ELIMINAR ## --
-moverAlFinal :: (Eq t) => t -> [t] -> [t]
-moverAlFinal x []     = [x]
-moverAlFinal x (y:ys) = quitar x (y:ys) ++ [x]
 
 -- Borra el primer t (empezando desde la izquierda).
 quitar :: (Eq t) => t -> [t] -> [t]
