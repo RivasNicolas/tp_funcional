@@ -216,6 +216,10 @@ redTEST_EJ9B = (usuariosTEST_EJ9A, [], publicacionesTEST_EJ9B)
 redTEST_EJ9C = (usuariosTEST_EJ9C, [], publicacionesTEST_EJ9C)
 redTEST_EJ9D = (usuariosTEST_EJ9D, [], publicacionesTEST_EJ9D)
 redTEST_EJ9E = (usuariosTEST_EJ9E, [], publicacionesTEST_EJ9E)
+-- Los casos de prueba estan formados en base a la fuerza de los argumentos:
+-- Por ejemplo, "La red A no tiene publicaciones" fuerza a "Usuario A no tiene publicaciones"
+-- Pero "Usuario A no tiene publicaciones" no fuerza a "La red no tiene publicaciones", pues la red
+-- podría tener otro usuario que tenga publicaciones.
 testEj9 = test[
     "Caso 1: la red no tiene publicaciones"                                                    ~: tieneUnSeguidorFiel redTEST_EJ9A usuario900 ~?= False,
     "Caso 2: la red tiene menos de 2 usuarios diferentes"                                      ~: tieneUnSeguidorFiel redTEST_EJ9B usuario900 ~?= False,
@@ -261,7 +265,10 @@ redTestEJ10H = (usuariosTestEJ10H, relacionesTestEJ10H, [])
 usuarioGenericoA = (1, "A") -- Uitilizado como parametro reduntante
 usuarioGenericoB = (2, "B") -- Uitilizado como parametro reduntante
 
--- Casos Permutadbles:
+-- Casos Permutables:
+-- Los casos permutables se testean debido a que en los casos anteriores la lista
+-- de usuarios siempre se pasó de manera ordenada donde el primer usuario de la lista era el
+-- primer elemento de la secuencia, y el último elemento de la lista era el último de la secuencia.
 usuariosTestEJ10I_P1 = [usuario1000, usuario1001, usuario1002]
 usuariosTestEJ10I_P2 = [usuario1001, usuario1000, usuario1002]
 usuariosTestEJ10I_P3 = [usuario1001, usuario1002, usuario1000]
@@ -277,7 +284,9 @@ redTestEJ10I_P3 = (usuariosTestEJ10I_P3, relacionesTestEJ10I, [])
 redTestEJ10I_P4 = (usuariosTestEJ10I_P4, relacionesTestEJ10I, [])
 redTestEJ10I_P5 = (usuariosTestEJ10I_P5, relacionesTestEJ10I, [])
 redTestEJ10I_P6 = (usuariosTestEJ10I_P6, relacionesTestEJ10I, [])
-
+-- Los casos de prueba estan formados en base a la fuerza de los argumentos:
+-- Por ejemplo, "La no tiene usuarios" fuerza un resultado False, pues no
+-- existe ningún usuario que sea parte de la red.
 testEj10 = test [
     "Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
     "Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
