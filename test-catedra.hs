@@ -1,6 +1,5 @@
 import Test.HUnit
 import Solucion
-
 main = runTestTT tests
 
 -- Todos los tests que incluyen un 1 en su nombre, venían con la consigna
@@ -85,6 +84,14 @@ publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1
 redB = (usuariosB, relacionesB, publicacionesB)
 
 -- Test realizados por nosotros --
+
+redVacia = ([], [], [])
+testEj1 = test [
+    "Caso 1: La red no tiene usuarios" ~: nombresDeUsuarios redVacia  ~?= [],
+  --"Caso 2: La red tiene mas de un usuario" ~: nombresDeUsuarios redA = ["Juan","Natalia","Pedro","Mariela"], -> Testeado en main
+    "Caso 3: La red tiene usuarios con nombres repetidos" ~: nombresDeUsuarios redB ~?= ["Juan", "Pedro", "Natalia"]
+ ]
+
 testsEj2 = test [
     --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
     "Caso 2: red tiene relaciones que no contienen a u. Red contiene a u." ~: amigosDe red2 usuario_2_4 ~?= [],
@@ -180,4 +187,110 @@ testsEj8 = test[
     "Caso 4: red tiene publicaciones y uno solo de los dos usuarios tiene publicaciones que le gustan, mientras el otro no tiene ninguna" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario1 ~?= False,
     "Caso 5: red tiene publicaciones y ambos usuarios tienen publicaciones que les gustan en común pero, también tienen algunas que les gustan a ellos solos" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario5 ~?= False,
     "Caso 6: red tiene publicaciones y a u1 y u2 les gustan todas las mismas" ~: lesGustanLasMismasPublicaciones red6 usuario_2_3 usuario_2_4 ~?= True
+    ]
+
+usuario900 = (1, "u1")
+usuario901 = (2, "u2")
+usuario902 = (3, "u3")
+usuario903 = (4, "u4") -- Sin publicaiones
+usuario904 = (5, "u5")
+
+publicacion900_1 = (usuario900, "pA", []) -- Publicación sin likes
+publicacion900_2 = (usuario900, "pB", [usuario900,usuario901])
+publicacion900_3 = (usuario900, "pC", [usuario902])
+publicacion900_4 = (usuario900, "pD", [usuario902])
+publicacion900_5 = (usuario900, "pE", [usuario902])
+
+usuariosTEST_EJ9A = [usuario900]
+usuariosTEST_EJ9C = [usuario900, usuario901, usuario903]
+usuariosTEST_EJ9D = [usuario900, usuario901, usuario902]
+usuariosTEST_EJ9E = [usuario900, usuario902]
+
+publicacionesTEST_EJ9B = [publicacion900_1]
+publicacionesTEST_EJ9C = [publicacion900_1, publicacion900_2]
+publicacionesTEST_EJ9D = [publicacion900_2, publicacion900_3, publicacion900_4]
+publicacionesTEST_EJ9E = [publicacion900_3, publicacion900_4, publicacion900_5]
+
+redTEST_EJ9A = (usuariosTEST_EJ9A,[],[])
+redTEST_EJ9B = (usuariosTEST_EJ9A, [], publicacionesTEST_EJ9B)
+redTEST_EJ9C = (usuariosTEST_EJ9C, [], publicacionesTEST_EJ9C)
+redTEST_EJ9D = (usuariosTEST_EJ9D, [], publicacionesTEST_EJ9D)
+redTEST_EJ9E = (usuariosTEST_EJ9E, [], publicacionesTEST_EJ9E)
+testEj9 = test[
+    "Caso 1: la red no tiene publicaciones"                                                    ~: tieneUnSeguidorFiel redTEST_EJ9A usuario900 ~?= False,
+    "Caso 2: la red tiene menos de 2 usuarios diferentes"                                      ~: tieneUnSeguidorFiel redTEST_EJ9B usuario900 ~?= False,
+    "Caso 3: el usuario no tiene publicaciones en esta red"                                    ~: tieneUnSeguidorFiel redTEST_EJ9C usuario903 ~?= False,
+    "Caso 4: no existe un usuario u2 al que le gusten TODAS las publicaciones de u1"           ~: tieneUnSeguidorFiel redTEST_EJ9D usuario900 ~?= False,
+    "Caso 5: existe por lo menos un usuario u2 al que le gustan TODAS las publicaciones de u1" ~: tieneUnSeguidorFiel redTEST_EJ9E usuario900 ~?= True
+    ]
+
+usuario1000 = (1000, "A")
+usuario1001 = (1001, "B")
+usuario1002 = (1002, "C")
+usuario1003 = (1003, "D")
+
+relacion1000_1002 = (usuario1000, usuario1002)
+relacion1000_1001 = (usuario1000, usuario1001)
+relacion1001_1002 = (usuario1001, usuario1002)
+relacion1002_1003 = (usuario1002, usuario1003)
+
+usuariosTestEJ10B = [usuario1000, usuario1001]
+usuariosTestEJ10C = [usuario1000, usuario1002]
+usuariosTestEJ10D = [usuario1001, usuario1002]
+usuariosTestEJ10E = [usuario1000, usuario1001, usuario1002]
+usuariosTestEJ10F = usuariosTestEJ10E
+usuariosTestEJ10G = [usuario1000, usuario1001, usuario1002, usuario1003]
+usuariosTestEJ10H = usuariosTestEJ10G
+
+relacionesTestEJ10C = [relacion1000_1002]
+relacionesTestEJ10D = [relacion1001_1002]
+relacionesTestEJ10E = [relacion1000_1001]
+relacionesTestEJ10F = [relacion1001_1002]
+relacionesTestEJ10G = [relacion1000_1001, relacion1002_1003]
+relacionesTestEJ10H = [relacion1000_1001, relacion1001_1002, relacion1002_1003]
+
+redTestEJ10A = ([],[],[])
+redTestEJ10B = (usuariosTestEJ10B, [], [])
+redTestEJ10C = (usuariosTestEJ10C, relacionesTestEJ10C, [])
+redTestEJ10D = (usuariosTestEJ10D, relacionesTestEJ10D, [])
+redTestEJ10E = (usuariosTestEJ10E, relacionesTestEJ10E, [])
+redTestEJ10F = (usuariosTestEJ10E, relacionesTestEJ10F, [])
+redTestEJ10G = (usuariosTestEJ10G, relacionesTestEJ10G, [])
+redTestEJ10H = (usuariosTestEJ10H, relacionesTestEJ10H, [])
+
+usuarioGenericoA = (1, "A") -- Uitilizado como parametro reduntante
+usuarioGenericoB = (2, "B") -- Uitilizado como parametro reduntante
+
+-- Casos Permutadbles:
+usuariosTestEJ10I_P1 = [usuario1000, usuario1001, usuario1002]
+usuariosTestEJ10I_P2 = [usuario1001, usuario1000, usuario1002]
+usuariosTestEJ10I_P3 = [usuario1001, usuario1002, usuario1000]
+usuariosTestEJ10I_P4 = [usuario1000, usuario1002, usuario1001]
+usuariosTestEJ10I_P5 = [usuario1002, usuario1000, usuario1001]
+usuariosTestEJ10I_P6 = [usuario1002, usuario1001, usuario1000]
+
+relacionesTestEJ10I = [relacion1000_1001, relacion1001_1002]
+
+redTestEJ10I_P1 = (usuariosTestEJ10I_P1, relacionesTestEJ10I, [])
+redTestEJ10I_P2 = (usuariosTestEJ10I_P2, relacionesTestEJ10I, [])
+redTestEJ10I_P3 = (usuariosTestEJ10I_P3, relacionesTestEJ10I, [])
+redTestEJ10I_P4 = (usuariosTestEJ10I_P4, relacionesTestEJ10I, [])
+redTestEJ10I_P5 = (usuariosTestEJ10I_P5, relacionesTestEJ10I, [])
+redTestEJ10I_P6 = (usuariosTestEJ10I_P6, relacionesTestEJ10I, [])
+
+testEj10 = test [
+    "Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
+    "Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
+    "Caso 3: 1001 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10C usuario1000 usuario1001 ~?= False,
+    "Caso 4: 1000 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10D usuario1000 usuario1001 ~?= False,
+    "Caso 5: 1002 no tiene amigos"                    ~: existeSecuenciaDeAmigos redTestEJ10E usuario1000 usuario1002 ~?= False,
+    "Caso 6: 1000 no tiene amigos"                    ~: existeSecuenciaDeAmigos redTestEJ10F usuario1000 usuario1002 ~?= False,
+    "Caso 7: No existe la secuencia de amigos"        ~: existeSecuenciaDeAmigos redTestEJ10G usuario1000 usuario1003 ~?= False,
+    "Caso 8: Existe la secuencia de amigos"           ~: existeSecuenciaDeAmigos redTestEJ10H usuario1000 usuario1003 ~?= True,
+    "Case permutado 1: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P1 usuario1000 usuario1002 ~?= True,
+    "Case permutado 2: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P2 usuario1000 usuario1002 ~?= True,
+    "Case permutado 3: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P3 usuario1000 usuario1002 ~?= True,
+    "Case permutado 4: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P4 usuario1000 usuario1002 ~?= True,
+    "Case permutado 5: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P5 usuario1000 usuario1002 ~?= True,
+    "Case permutado 6: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P6 usuario1000 usuario1002 ~?= True
     ]
