@@ -190,21 +190,12 @@ esSubconjunto (x:xs) (y:ys)
 -- Si hacemos "existeSecuenciaDeAmigos <RedSocial> U1 U3", nos devolvera verdadero, pues hay
 -- una cadena de amigos entre U1 y U3
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rsRed uU1 uU2
-    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False -- (**)
-    | otherwise = existeSecuenciaDeAmigos' (usuarios rsRed) uU1 uU2 rsRed
+existeSecuenciaDeAmigos rsRed uU1 uU2 = existeSecuenciaDeAmigos' (usuarios rsRed) uU1 uU2 rsRed
 
 existeSecuenciaDeAmigos' :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
 existeSecuenciaDeAmigos' us uU1 uU2 rsRed
-    | pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed) == False = False -- (**)
+    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False -- (**)
     | otherwise               = cadenaDeAmigos uU1 uU2 us rsRed
-  -- (**) Uno de los dos es redundante
-
--- Devuelve el último elemento de una lista
-ultimoElem :: (Eq t) => [t] -> t
-ultimoElem [x] = x
-ultimoElem (x:xs) = ultimoElem xs
-
 
 -- Borra el primer t (empezando desde la izquierda).
 quitar :: (Eq t) => t -> [t] -> [t]

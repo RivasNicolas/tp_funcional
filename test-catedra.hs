@@ -261,7 +261,7 @@ redTestEJ10H = (usuariosTestEJ10H, relacionesTestEJ10H, [])
 usuarioGenericoA = (1, "A") -- Uitilizado como parametro reduntante
 usuarioGenericoB = (2, "B") -- Uitilizado como parametro reduntante
 
--- Casos Permutadbles:
+-- Casos Permutables:
 usuariosTestEJ10I_P1 = [usuario1000, usuario1001, usuario1002]
 usuariosTestEJ10I_P2 = [usuario1001, usuario1000, usuario1002]
 usuariosTestEJ10I_P3 = [usuario1001, usuario1002, usuario1000]
