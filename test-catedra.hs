@@ -72,6 +72,12 @@ publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1
 redB = (usuariosB, relacionesB, publicacionesB)
 
 -- Test realizados por nosotros --
+redVacia = ([], [], [])
+testEj1 = test [
+    "Caso 1: La red no tiene usuarios" ~: nombresDeUsuarios redVacia  ~?= [],
+  --"Caso 2: La red tiene mas de un usuario" ~: nombresDeUsuarios redA = ["Juan","Natalia","Pedro","Mariela"], -> Testeado en main
+    "Caso 3: La red tiene usuarios con nombres repetidos" ~: nombresDeUsuarios redB ~?= ["Juan", "Pedro", "Natalia"]
+ ]
 testsEj2 = test [
     --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
     "Caso 2: red tiene relaciones que no contienen a u. Red contiene a u." ~: amigosDe red2 usuario_2_4 ~?= [],
