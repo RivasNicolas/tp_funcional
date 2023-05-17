@@ -24,16 +24,16 @@ tests = test [
     " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redA usuario1) ~?= True,
 
     " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True,
-    --" nombresDeUsuarios" ~: testsEj1,
+    " nombresDeUsuarios" ~: testsEj1,
     " amigosDe" ~: testsEj2,
     " cantidadDeAmigos" ~: testsEj3,
     " usuarioConMasAmigos" ~: testsEj4,
     " estaRobertoCarlos" ~: testsEj5,
     " publicacionesDe" ~: testsEj6,
     " publicacionesQueLeGustanA" ~: testsEj7,
-    " leGustanLasMismasPublicaciones" ~: testsEj8
-    --" tieneUnSeguidorFiel" ~: testsEj9,
-    --" existeSecuenciaDeAmigos" ~: testsEj10
+    " leGustanLasMismasPublicaciones" ~: testsEj8,
+    " tieneUnSeguidorFiel" ~: testsEj9,
+    " existeSecuenciaDeAmigos" ~: testsEj10
  ]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
@@ -86,7 +86,7 @@ redB = (usuariosB, relacionesB, publicacionesB)
 -- Test realizados por nosotros --
 
 redVacia = ([], [], [])
-testEj1 = test [
+testsEj1 = test [
     "Caso 1: La red no tiene usuarios" ~: nombresDeUsuarios redVacia  ~?= [],
   --"Caso 2: La red tiene mas de un usuario" ~: nombresDeUsuarios redA = ["Juan","Natalia","Pedro","Mariela"], -> Testeado en main
     "Caso 3: La red tiene usuarios con nombres repetidos" ~: nombresDeUsuarios redB ~?= ["Juan", "Pedro", "Natalia"]
@@ -220,7 +220,7 @@ redTEST_EJ9E = (usuariosTEST_EJ9E, [], publicacionesTEST_EJ9E)
 -- Por ejemplo, "La red A no tiene publicaciones" fuerza a "Usuario A no tiene publicaciones"
 -- Pero "Usuario A no tiene publicaciones" no fuerza a "La red no tiene publicaciones", pues la red
 -- podría tener otro usuario que tenga publicaciones.
-testEj9 = test[
+testsEj9 = test[
     "Caso 1: la red no tiene publicaciones"                                                    ~: tieneUnSeguidorFiel redTEST_EJ9A usuario900 ~?= False,
     "Caso 2: la red tiene menos de 2 usuarios diferentes"                                      ~: tieneUnSeguidorFiel redTEST_EJ9B usuario900 ~?= False,
     "Caso 3: el usuario no tiene publicaciones en esta red"                                    ~: tieneUnSeguidorFiel redTEST_EJ9C usuario903 ~?= False,
@@ -287,7 +287,7 @@ redTestEJ10I_P6 = (usuariosTestEJ10I_P6, relacionesTestEJ10I, [])
 -- Los casos de prueba estan formados en base a la fuerza de los argumentos:
 -- Por ejemplo, "La no tiene usuarios" fuerza un resultado False, pues no
 -- existe ningún usuario que sea parte de la red.
-testEj10 = test [
+testsEj10 = test [
     "Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
     "Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
     "Caso 3: 1001 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10C usuario1000 usuario1001 ~?= False,
