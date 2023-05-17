@@ -1,5 +1,5 @@
 import Test.HUnit
-import iap1-tp
+import Solucion
 main = runTestTT tests
 
 tests = test [
@@ -210,64 +210,70 @@ usuario1000 = (1000, "A")
 usuario1001 = (1001, "B")
 usuario1002 = (1002, "C")
 usuario1003 = (1003, "D")
-usuario1004 = (1004, "E")
-usuario1005 = (1005, "F") -- Este usuario debe estar relacionados con todos (excepto 1006)
-usuario1006 = (1006, "G") -- Este usuario no debe estar relacionado con ningun otro
 
+relacion1000_1002 = (usuario1000, usuario1002)
 relacion1000_1001 = (usuario1000, usuario1001)
 relacion1001_1002 = (usuario1001, usuario1002)
 relacion1002_1003 = (usuario1002, usuario1003)
-relacion1003_1004 = (usuario1003, usuario1004)
 
-relacion1005_1000 = (usuario1005, usuario1000)
-relacion1005_1001 = (usuario1005, usuario1001)
-relacion1005_1002 = (usuario1005, usuario1002)
+usuariosTestEJ10B = [usuario1000, usuario1001]
+usuariosTestEJ10C = [usuario1000, usuario1002]
+usuariosTestEJ10D = [usuario1001, usuario1002]
+usuariosTestEJ10E = [usuario1000, usuario1001, usuario1002]
+usuariosTestEJ10F = usuariosTestEJ10E
+usuariosTestEJ10G = [usuario1000, usuario1001, usuario1002, usuario1003]
+usuariosTestEJ10H = usuariosTestEJ10G
 
-relacionesTestEJ10A = [relacion1000_1001]
-usuariosTestEJ10A = [usuario1000, usuario1001]
-redTestEJ10A = (usuariosTestEJ10A, relacionesTestEJ10A, [])
+relacionesTestEJ10C = [relacion1000_1002]
+relacionesTestEJ10D = [relacion1001_1002]
+relacionesTestEJ10E = [relacion1000_1001]
+relacionesTestEJ10F = [relacion1001_1002]
+relacionesTestEJ10G = [relacion1000_1001, relacion1002_1003]
+relacionesTestEJ10H = [relacion1000_1001, relacion1001_1002, relacion1002_1003]
 
-relacionesTestEJ10B = [relacion1000_1001, relacion1001_1002]
-usuariosTestEJ10B = [usuario1000, usuario1001, usuario1002]
-redTestEJ10B = (usuariosTestEJ10B, relacionesTestEJ10B, [])
-
-relacionesTestEJ10C = [relacion1000_1001, relacion1001_1002, relacion1002_1003, relacion1003_1004]
-usuariosTestEJ10C_Per1 = [usuario1000, usuario1001, usuario1002, usuario1003, usuario1004]
-usuariosTestEJ10C_Per2 = [usuario1000, usuario1001, usuario1003, usuario1002, usuario1004]
-usuariosTestEJ10C_Per3 = [usuario1000, usuario1002, usuario1001, usuario1003, usuario1004]
-usuariosTestEJ10C_Per4 = [usuario1000, usuario1002, usuario1003, usuario1001, usuario1004]
-usuariosTestEJ10C_Per5 = [usuario1000, usuario1003, usuario1001, usuario1002, usuario1004]
-usuariosTestEJ10C_Per6 = [usuario1000, usuario1003, usuario1002, usuario1001, usuario1004]
-redTestEJ10C = (usuariosTestEJ10C_Per1, relacionesTestEJ10C, [])
-
-relacionesTestEJ10D = [relacion1000_1001, relacion1001_1002, relacion1002_1003, relacion1003_1004]
-usuariosTestEJ10D = [usuario1000, usuario1001, usuario1002, usuario1006, usuario1003, usuario1004]
+redTestEJ10A = ([],[],[])
+redTestEJ10B = (usuariosTestEJ10B, [], [])
+redTestEJ10C = (usuariosTestEJ10C, relacionesTestEJ10C, [])
 redTestEJ10D = (usuariosTestEJ10D, relacionesTestEJ10D, [])
+redTestEJ10E = (usuariosTestEJ10E, relacionesTestEJ10E, [])
+redTestEJ10F = (usuariosTestEJ10E, relacionesTestEJ10F, [])
+redTestEJ10G = (usuariosTestEJ10G, relacionesTestEJ10G, [])
+redTestEJ10H = (usuariosTestEJ10H, relacionesTestEJ10H, [])
 
-relacionesTestEJ10E = [relacion1000_1001, relacion1001_1002, relacion1005_1000, relacion1005_1001, relacion1005_1002]
-usuariosTestEJ10E_Per1A = [usuario1000, usuario1001, usuario1002, usuario1005]
-usuariosTestEJ10E_Per1B = [usuario1000, usuario1002, usuario1001, usuario1005]
-usuariosTestEJ10E_Per2A = [usuario1005, usuario1001, usuario1002, usuario1000]
-usuariosTestEJ10E_Per2B = [usuario1005, usuario1002, usuario1001, usuario1000]
-redTestEJ10E = (usuariosTestEJ10E_Per1A, relacionesTestEJ10E, [])
+usuarioGenericoA = (1, "A") -- Uitilizado como parametro reduntante
+usuarioGenericoB = (2, "B") -- Uitilizado como parametro reduntante
 
--- Para testear este ejercicio los elementos de los extremos del
--- parametro [Usuarios] no se deben permutar (ya que eso nunca puede ocurrir)
--- por ejemplo si testeamos [u1, u2, u3, u4], tambien debemos testear [u1, u3, u2, u4]
--- si fuera [u1, u2, u3, u4, u5] testeamos [u1, (permutaciones de [u2,u3,u4]), u5]
-testCadenaDeAmigos = runTestTT testEJ10A
-testEJ10A = test [
-    " cadenaDeAmigos 2U, 1R V" ~: (cadenaDeAmigos2 usuariosTestEJ10A redTestEJ10A) ~?= True,
-    " cadenaDeAmigos 3U, 2R V" ~: (cadenaDeAmigos2 usuariosTestEJ10B redTestEJ10B) ~?= True,
-    " cadenaDeAmigos 5U, 4R P1 V" ~: (cadenaDeAmigos2 usuariosTestEJ10C_Per1 redTestEJ10C) ~?= True,
-    " cadenaDeAmigos 5U, 4R P2 V" ~: (cadenaDeAmigos2 usuariosTestEJ10C_Per2 redTestEJ10C) ~?= True,
-    " cadenaDeAmigos 5U, 4R P3 V" ~: (cadenaDeAmigos2 usuariosTestEJ10C_Per3 redTestEJ10C) ~?= True,
-    " cadenaDeAmigos 5U, 4R P4 V" ~: (cadenaDeAmigos2 usuariosTestEJ10C_Per4 redTestEJ10C) ~?= True,
-    " cadenaDeAmigos 5U, 4R P5 V" ~: (cadenaDeAmigos2 usuariosTestEJ10C_Per5 redTestEJ10C) ~?= True,
-    " cadenaDeAmigos 5U, 4R P6 V" ~: (cadenaDeAmigos2 usuariosTestEJ10C_Per6 redTestEJ10C) ~?= True,
-    " un usuario no tiene ninguna relacion F" ~: (cadenaDeAmigos2 usuariosTestEJ10D redTestEJ10D) ~?= False,
-    " un usuario tiene a todos en su lista de amigos A V" ~: (cadenaDeAmigos2 usuariosTestEJ10E_Per1A redTestEJ10E) ~?= True,
-    " un usuario tiene a todos en su lista de amigos B V" ~: (cadenaDeAmigos2 usuariosTestEJ10E_Per1B redTestEJ10E) ~?= True,
-    " un usuario tiene a todos en su lista de amigos C V" ~: (cadenaDeAmigos2 usuariosTestEJ10E_Per2A redTestEJ10E) ~?= True,
-    " un usuario tiene a todos en su lista de amigos D V" ~: (cadenaDeAmigos2 usuariosTestEJ10E_Per2B redTestEJ10E) ~?= True
+-- Casos Permutados:
+usuariosTestEJ10I_P1 = [usuario1000, usuario1001, usuario1002]
+usuariosTestEJ10I_P2 = [usuario1001, usuario1000, usuario1002]
+usuariosTestEJ10I_P3 = [usuario1001, usuario1002, usuario1000]
+usuariosTestEJ10I_P4 = [usuario1000, usuario1002, usuario1001]
+usuariosTestEJ10I_P5 = [usuario1002, usuario1000, usuario1001]
+usuariosTestEJ10I_P6 = [usuario1002, usuario1001, usuario1000]
+
+relacionesTestEJ10I = [relacion1000_1001, relacion1001_1002]
+
+redTestEJ10I_P1 = (usuariosTestEJ10I_P1, relacionesTestEJ10I, [])
+redTestEJ10I_P2 = (usuariosTestEJ10I_P2, relacionesTestEJ10I, [])
+redTestEJ10I_P3 = (usuariosTestEJ10I_P3, relacionesTestEJ10I, [])
+redTestEJ10I_P4 = (usuariosTestEJ10I_P4, relacionesTestEJ10I, [])
+redTestEJ10I_P5 = (usuariosTestEJ10I_P5, relacionesTestEJ10I, [])
+redTestEJ10I_P6 = (usuariosTestEJ10I_P6, relacionesTestEJ10I, [])
+
+testExisteSecuenciaDeAmigos = runTestTT testEJ10
+testEJ10 = test [
+    "Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
+    "Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
+    "Caso 3: 1001 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10C usuario1000 usuario1001 ~?= False,
+    "Caso 4: 1000 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10D usuario1000 usuario1001 ~?= False,
+    "Caso 5: 1002 no tiene amigos"                    ~: existeSecuenciaDeAmigos redTestEJ10E usuario1000 usuario1002 ~?= False,
+    "Caso 6: 1000 no tiene amigos"                    ~: existeSecuenciaDeAmigos redTestEJ10F usuario1000 usuario1002 ~?= False,
+    "Caso 7: No existe la secuencia de amigos"        ~: existeSecuenciaDeAmigos redTestEJ10G usuario1000 usuario1003 ~?= False,
+    "Caso 8: Existe la secuencia de amigos"           ~: existeSecuenciaDeAmigos redTestEJ10H usuario1000 usuario1003 ~?= True,
+    "Case permutado 1: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P1 usuario1000 usuario1002 ~?= True,
+    "Case permutado 2: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P2 usuario1000 usuario1002 ~?= True,
+    "Case permutado 3: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P3 usuario1000 usuario1002 ~?= True,
+    "Case permutado 4: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P4 usuario1000 usuario1002 ~?= True,
+    "Case permutado 5: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P5 usuario1000 usuario1002 ~?= True,
+    "Case permutado 6: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P6 usuario1000 usuario1002 ~?= True
  ]

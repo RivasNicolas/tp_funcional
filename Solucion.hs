@@ -153,35 +153,23 @@ esSubconjunto (x:xs) (y:ys)
 -- U1 es amigo de U2, U2 es amigo de U3
 -- Si hacemos "existeSecuenciaDeAmigos <RedSocial> U1 U3", nos devolvera verdadero, pues hay
 -- una cadena de amigos entre U1 y U3
--- ## MARCADA_PARA_ELIMINAR
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos rsRed uU1 uU2
     | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False
     | otherwise = existeSecuenciaDeAmigos' (usuarios rsRed) uU1 uU2 rsRed
--- ## MARCADA_PARA_ELIMINAR
+
 existeSecuenciaDeAmigos' :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
 existeSecuenciaDeAmigos' us uU1 uU2 rsRed
-    | not (empiezaCon uU1 us) = existeSecuenciaDeAmigos' (moverAlPrincipio uU1 us) uU1 uU2 rsRed
-    | not (terminaCon uU2 us) = existeSecuenciaDeAmigos' (moverAlFinal uU2 us) uU1 uU2 rsRed
-    | otherwise               = cadenaDeAmigos us rsRed
+    | pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed) == False = False
+    | otherwise               = cadenaDeAmigos uU1 uU2 us rsRed
 
--- ## MARCADA_PARA_ELIMINAR
--- Verifica si el primer elemento de una lista [t] es t
-empiezaCon :: (Eq t) => t -> [t] -> Bool
-empiezaCon x (y:_) = x == y
-
-lista1 = []
 -- Toma un elemento t y una lista [t] y :
 -- Si el elemento t existe en la lista, toma el elemento mas a la izquierda de la lista y lo mueve al principio
 -- Si el elemento t no existe en la lista, agrega t al principio de la lista.
+-- ## MARCADA PARA ELIMINAR ## --
 moverAlPrincipio :: (Eq t) => t -> [t] -> [t]
 moverAlPrincipio x []     = [x]
 moverAlPrincipio x (y:ys) = x:quitar x (y:ys)
-
--- ## MARCADA_PARA_ELIMINAR
--- Verifica si el último elemento de una lista [t] es t
-terminaCon :: (Eq t) => t -> [t] -> Bool
-terminaCon x (y:ys) = x == ultimoElem (y:ys)
 
 -- Devuelve el último elemento de una lista
 ultimoElem :: (Eq t) => [t] -> t
@@ -191,6 +179,7 @@ ultimoElem (x:xs) = ultimoElem xs
 -- Toma un elemento t y una lista [t] y :
 -- Si el elemento t existe en la lista, toma el elemento mas a la izquierda de la lista y lo mueve al fondo
 -- Si el elemento t no existe en la lista, agrega t al final de la lista.
+-- ## MARCADA PARA ELIMINAR ## --
 moverAlFinal :: (Eq t) => t -> [t] -> [t]
 moverAlFinal x []     = [x]
 moverAlFinal x (y:ys) = quitar x (y:ys) ++ [x]
@@ -202,28 +191,23 @@ quitar x (y:ys)
     | x == y = ys
     | otherwise = y:quitar x ys
 
--- ## MARCADA_PARA_ELIMINAR
--- Borra varios elementos de un conjunto t (empezando desde la izquierda)
-quitarVarios :: (Eq t) => [t] -> [t] -> [t]
-quitarVarios _ [] = []
-quitarVarios [] t = t
-quitarVarios (x:xs) ys = quitarVarios xs (quitar x ys)
 -- Toma una lista de usuarios liU y un RedSocial y verifica si existe una cadena de amigos entre
 -- todos los Usuarios en liU.
 -- Por ejemplo [U1, U2, U3, U4], si U1 esta relacionado con U2, U2 con U3 y U3 con U4, entonces
 -- devuelve verdadero.
-cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
-cadenaDeAmigos [u1, u2] rsRed = relacionadosDirecto u1 u2 rsRed
-cadenaDeAmigos (u1:u2:us) rsRed
+cadenaDeAmigos :: Usuario -> Usuario -> [Usuario] -> RedSocial -> Bool
+cadenaDeAmigos u0 un [u1, u2] rsRed = relacionadosDirecto u1 u2 rsRed
+cadenaDeAmigos u0 un (u1:u2:us) rsRed
     | cantidadDeAmigos rsRed u1 == 0  = False
-    | not (perteneceAlgunElemDe (amigosDe rsRed u2) us) && relacionadosDirecto u1 u2 rsRed = cadenaDeAmigos (u1:us) rsRed
-    | relacionadosDirecto u1 u2 rsRed                                                      = cadenaDeAmigos (u2:us) rsRed
-    | otherwise                                                                            = cadenaDeAmigos ((u1:us) ++ [u2]) rsRed
-
-
+    | not (perteneceAlgunElemDe (amigosDe rsRed u2) us) && relacionadosDirecto u1 u2 rsRed && u1 == u0 = False
+    | not (perteneceAlgunElemDe (amigosDe rsRed u1) us) && relacionadosDirecto u1 u2 rsRed && u2 == un = False
+    | not (perteneceAlgunElemDe (amigosDe rsRed u2) us) && relacionadosDirecto u1 u2 rsRed             = cadenaDeAmigos u0 un (u1:us) rsRed
+    | relacionadosDirecto u1 u2 rsRed && u2 == un                                                      = cadenaDeAmigos u0 un (u1:us) rsRed
+    | relacionadosDirecto u1 u2 rsRed                                                                  = cadenaDeAmigos u0 un (u2:us) rsRed
+    | otherwise                                                                                        = cadenaDeAmigos u0 un ((u1:us) ++ [u2]) rsRed
  
 -- Toma dos usuarios U1, U2 y toma una RedSocial y verifica si existe, una dupla Relación
--- en RedSocial que contiene U1 y U2 como sus elementos.
+-- en RedSocial que contiene a U1 y U2 como sus elementos.
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto uU1 uU2 rsRed = pertenece (uU1, uU2) (relaciones rsRed) || pertenece (uU2, uU1) (relaciones rsRed)
 
@@ -236,25 +220,7 @@ perteneceAlgunElemDe (x:xs) liY
     | pertenece x liY = True
     | otherwise       = perteneceAlgunElemDe xs liY
 
-existeSecuenciaDeAmigos2 :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos2 rsRed uU1 uU2
-    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False
-    | otherwise = existeSecuenciaDeAmigos2' (usuarios rsRed) uU1 uU2 rsRed
-
-existeSecuenciaDeAmigos2' :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
-existeSecuenciaDeAmigos2' us uU1 uU2 rsRed
-    | not (pertenece uU2 (usuarios rsRed)) || not (pertenece uU1 (usuarios rsRed)) = False
-    | cantidadDeElementosLista (quitar uU2 (amigosDe rsRed uU1)) == 0 || cantidadDeElementosLista (quitar uU1 (amigosDe rsRed uU2)) == 0 = False
-    | otherwise               = cadenaDeAmigos2 (quitar uU2 (amigosDe rsRed uU1)) rsRed
-
+-- Devuelve todos los elementos de una lista excepto el último
 principio :: (Eq t) => [t] -> [t]
 principio [x] = []
 principio (x:xs) = x:principio xs
-
-cadenaDeAmigos2 :: [Usuario] -> RedSocial -> Bool
-cadenaDeAmigos2 [u1, u2] rsRed = relacionadosDirecto u1 u2 rsRed
-cadenaDeAmigos2 (u1:u2:us) rsRed
-    | cantidadDeAmigos rsRed u1 == 0                                                       = False
-    | not (perteneceAlgunElemDe (amigosDe rsRed u2) us) && relacionadosDirecto u1 u2 rsRed = cadenaDeAmigos2 (u1:us) rsRed
-    | relacionadosDirecto u1 u2 rsRed                                                      = cadenaDeAmigos2 (u2:us) rsRed
-    | otherwise                                                                            = cadenaDeAmigos2 ((u1:us) ++ [u2]) rsRed
