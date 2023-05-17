@@ -2,6 +2,8 @@ import Test.HUnit
 import Solucion
 main = runTestTT tests
 
+-- Todos los tests que incluyen un 1 en su nombre, venían con la consigna
+
 tests = test [
     " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
 
@@ -21,7 +23,17 @@ tests = test [
 
     " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redA usuario1) ~?= True,
 
-    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
+    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True,
+    --" nombresDeUsuarios" ~: testsEj1,
+    " amigosDe" ~: testsEj2,
+    " cantidadDeAmigos" ~: testsEj3,
+    " usuarioConMasAmigos" ~: testsEj4,
+    " estaRobertoCarlos" ~: testsEj5,
+    " publicacionesDe" ~: testsEj6,
+    " publicacionesQueLeGustanA" ~: testsEj7,
+    " leGustanLasMismasPublicaciones" ~: testsEj8
+    --" tieneUnSeguidorFiel" ~: testsEj9,
+    --" existeSecuenciaDeAmigos" ~: testsEj10
  ]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
@@ -72,12 +84,14 @@ publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1
 redB = (usuariosB, relacionesB, publicacionesB)
 
 -- Test realizados por nosotros --
+
 redVacia = ([], [], [])
 testEj1 = test [
     "Caso 1: La red no tiene usuarios" ~: nombresDeUsuarios redVacia  ~?= [],
   --"Caso 2: La red tiene mas de un usuario" ~: nombresDeUsuarios redA = ["Juan","Natalia","Pedro","Mariela"], -> Testeado en main
     "Caso 3: La red tiene usuarios con nombres repetidos" ~: nombresDeUsuarios redB ~?= ["Juan", "Pedro", "Natalia"]
  ]
+
 testsEj2 = test [
     --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
     "Caso 2: red tiene relaciones que no contienen a u. Red contiene a u." ~: amigosDe red2 usuario_2_4 ~?= [],
@@ -175,8 +189,6 @@ testsEj8 = test[
     "Caso 6: red tiene publicaciones y a u1 y u2 les gustan todas las mismas" ~: lesGustanLasMismasPublicaciones red6 usuario_2_3 usuario_2_4 ~?= True
     ]
 
-
-
 usuario900 = (1, "u1")
 usuario901 = (2, "u2")
 usuario902 = (3, "u3")
@@ -210,7 +222,7 @@ testEj9 = test[
     "Caso 3: el usuario no tiene publicaciones en esta red"                                    ~: tieneUnSeguidorFiel redTEST_EJ9C usuario903 ~?= False,
     "Caso 4: no existe un usuario u2 al que le gusten TODAS las publicaciones de u1"           ~: tieneUnSeguidorFiel redTEST_EJ9D usuario900 ~?= False,
     "Caso 5: existe por lo menos un usuario u2 al que le gustan TODAS las publicaciones de u1" ~: tieneUnSeguidorFiel redTEST_EJ9E usuario900 ~?= True
- ]
+    ]
 
 usuario1000 = (1000, "A")
 usuario1001 = (1001, "B")
@@ -249,7 +261,7 @@ redTestEJ10H = (usuariosTestEJ10H, relacionesTestEJ10H, [])
 usuarioGenericoA = (1, "A") -- Uitilizado como parametro reduntante
 usuarioGenericoB = (2, "B") -- Uitilizado como parametro reduntante
 
--- Casos Permutados:
+-- Casos Permutadbles:
 usuariosTestEJ10I_P1 = [usuario1000, usuario1001, usuario1002]
 usuariosTestEJ10I_P2 = [usuario1001, usuario1000, usuario1002]
 usuariosTestEJ10I_P3 = [usuario1001, usuario1002, usuario1000]
@@ -281,4 +293,4 @@ testEj10 = test [
     "Case permutado 4: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P4 usuario1000 usuario1002 ~?= True,
     "Case permutado 5: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P5 usuario1000 usuario1002 ~?= True,
     "Case permutado 6: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P6 usuario1000 usuario1002 ~?= True
- ]
+    ]
