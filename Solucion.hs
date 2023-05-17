@@ -38,9 +38,9 @@ likesDePublicacion (_, _, us) = us
 
 -- Devuelve un [String] cuyos elementos son los nombres de cada usuario de la red
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios rs = eliminarRepetidos (proyectarNombres (usuarios rs)) --Ojo que en la línea 20 rs se usa para llamar a las relaciones.
-                                                                          --Si bien funciona, no es bueno para el lector que dos variables que tienen el mismo nombre hagan referencia
-                                                                          --a cosas distintas
+nombresDeUsuarios rsRed = eliminarRepetidos (proyectarNombres (usuarios rsRed))
+-- Cambio el nombre de rs a rsRed
+
 -- proyectarNombres: Toma una lista de Usuarios y devuelve
 -- una lista de String donde cada elemento es el nombre 
 -- de usuario de cada uno de los elementos de la lista de
@@ -60,7 +60,7 @@ eliminarRepetidos (x:xs)
     | pertenece x xs              = eliminarRepetidos xs
     | otherwise                   = x:eliminarRepetidos xs
     
- -- tieneRepetidos: Verifica si una lista tiene una elemento
+-- tieneRepetidos: Verifica si una lista tiene una elemento
 -- mas de una véz
 tieneRepetidos :: (Eq t) => [t] -> Bool
 tieneRepetidos [] = False
@@ -69,7 +69,7 @@ tieneRepetidos (x:xs)
     | pertenece x xs  = True
     | otherwise       = tieneRepetidos xs
     
- -- pertenece: Verifica si un elemento pertenece
+-- pertenece: Verifica si un elemento pertenece
 -- a una lista de elementos del mismo tipo. 
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
@@ -140,16 +140,18 @@ publicacionesDe' (p:ps) uUsuario
 -- Obtiene todas las publicaciones de la red y se lo envía a la función auxiliar junto al usuario.
 -- Esta luego devolverá las publicaciones que le gustan al usuario, sin repetidos
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA rsRed us = eliminarRepetidos (publicacionesQueLeGustanAAux (publicaciones rsRed) us) --Revisar si el eliminarRepetidos es necesario
+publicacionesQueLeGustanA rsRed us = publicacionesQueLeGustanAAux (publicaciones rsRed) us
+-- eliminarRepetidos no es necesario, solo se pueden repetir si la red tiene la misma publicacion
+-- repetida dos o mas veces, en tal caso, la red no es valida.
 
 -- Toma una lista de publicaciones y un usuario.
 -- Si el usuario pertenece a la lista de usuarios que le dieron like a la publicacion, esta se agrega a la lista a devolver.
 publicacionesQueLeGustanAAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesQueLeGustanAAux [] _ = []
 publicacionesQueLeGustanAAux [pub] us | pertenece us (likesDePublicacion pub) = [pub]
-    | otherwise                                                            = []
+    | otherwise                                                               = []
 publicacionesQueLeGustanAAux (pub : pubs) us | pertenece us (likesDePublicacion pub) = pub : publicacionesQueLeGustanAAux pubs us
-    | otherwise                                                                   = publicacionesQueLeGustanAAux pubs us
+    | otherwise                                                                      = publicacionesQueLeGustanAAux pubs us
 
 -- Toma un RedSocial, dos Usuarios y devuelve un Bool si a ambos les gustan las mismas publicaciones
 -- A ambos les gustan las mismas publicaciones si la lista de publicaciones que le gustan al usuario1 está incluida en la lista de publicaciones que le gustan al usuario2,
@@ -194,7 +196,7 @@ existeSecuenciaDeAmigos rsRed uU1 uU2 = existeSecuenciaDeAmigos' (usuarios rsRed
 
 existeSecuenciaDeAmigos' :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
 existeSecuenciaDeAmigos' us uU1 uU2 rsRed
-    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False -- (**)
+    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False
     | otherwise               = cadenaDeAmigos uU1 uU2 us rsRed
 
 -- Borra el primer t (empezando desde la izquierda).
