@@ -12,7 +12,6 @@ type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto p
 type RedSocial = ([Usuario], [Relacion], [Publicacion])
 
 -- Funciones basicas
-
 usuarios :: RedSocial -> [Usuario]
 usuarios (us, _, _) = us
 
@@ -39,7 +38,6 @@ likesDePublicacion (_, _, us) = us
 -- Devuelve un [String] cuyos elementos son los nombres de cada usuario de la red
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios rsRed = eliminarRepetidos (proyectarNombres (usuarios rsRed))
--- Cambio el nombre de rs a rsRed
 
 -- proyectarNombres: Toma una lista de Usuarios y devuelve
 -- una lista de String donde cada elemento es el nombre 
@@ -60,8 +58,8 @@ eliminarRepetidos (x:xs)
     | pertenece x xs              = eliminarRepetidos xs
     | otherwise                   = x:eliminarRepetidos xs
     
--- tieneRepetidos: Verifica si una lista tiene una elemento
--- mas de una véz
+-- tieneRepetidos: Verifica si una lista tiene un elemento
+-- mas de una vez
 tieneRepetidos :: (Eq t) => [t] -> Bool
 tieneRepetidos [] = False
 tieneRepetidos [x] = False
@@ -80,22 +78,22 @@ pertenece x (y:ys)
 
 -- Devuelve una lista de usuarios que estan relacionados con un usuario especifico
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe rsRed uUsuario = amigosDe' (relaciones rsRed) uUsuario
+amigosDe rsRed uUsuario = amigosDeAux (relaciones rsRed) uUsuario
 
-amigosDe' :: [Relacion] -> Usuario -> [Usuario]
-amigosDe' [] _ = []
-amigosDe' [(u1,u2)] uUsuario
+amigosDeAux :: [Relacion] -> Usuario -> [Usuario]
+amigosDeAux [] _ = []
+amigosDeAux [(u1,u2)] uUsuario
     | uUsuario == u1 = [u2]
     | uUsuario == u2 = [u1]
     | otherwise      = []
-amigosDe' ((u1,u2):rRelaciones) uUsuario
-    | uUsuario == u1 = u2:amigosDe' rRelaciones uUsuario
-    | uUsuario == u2 = u1:amigosDe' rRelaciones uUsuario
-    | otherwise      = amigosDe' rRelaciones uUsuario
+amigosDeAux ((u1,u2):rRelaciones) uUsuario
+    | uUsuario == u1 = u2:amigosDeAux rRelaciones uUsuario
+    | uUsuario == u2 = u1:amigosDeAux rRelaciones uUsuario
+    | otherwise      = amigosDeAux rRelaciones uUsuario
 
 -- Devuelve un entero que representa la cantidad de amigos de la persona especificada. 
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos rs usuario = cantidadDeElementosLista (amigosDe rs usuario)
+cantidadDeAmigos rsRed usuario = cantidadDeElementosLista (amigosDe rsRed usuario)
 
 -- Hago una funcion auxiliar que cuente la cantidad de elementos que tengo en una lista
 cantidadDeElementosLista :: (Eq t) => [t] -> Int
@@ -105,44 +103,41 @@ cantidadDeElementosLista (x:xs) = 1 + cantidadDeElementosLista xs
 
 -- Devuelve el usuario que mas amigos tenga en toda la red social
 usuarioConMasAmigos :: RedSocial -> Usuario
-usuarioConMasAmigos rs = comparadorDeAmigos rs (usuarios rs)
+usuarioConMasAmigos rsRed = comparadorDeAmigos rsRed (usuarios rsRed)
 
 -- Hago una funcion auxiliar para comparar la cantidad de amigos de cada usuario y ver cual tiene mas
 comparadorDeAmigos :: RedSocial -> [Usuario] -> Usuario
 comparadorDeAmigos _ [x] = x
-comparadorDeAmigos rs (x:xs) | (cantidadDeAmigos rs x) >= cantidadDeAmigos rs (comparadorDeAmigos rs xs) = x
-                             | otherwise = comparadorDeAmigos rs xs
+comparadorDeAmigos rsRed (x:xs) | (cantidadDeAmigos rsRed x) >= cantidadDeAmigos rsRed (comparadorDeAmigos rsRed xs) = x
+                             | otherwise = comparadorDeAmigos rsRed xs
 
--- Determina si es que hay un usuario en la red social que tenga más de 10 amigos exactamente .....
+-- Determina si es que hay un usuario en la red social que tenga más de 10 amigos exactamente
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos rs = estaRobertoCarlosAux rs (usuarios rs)
+estaRobertoCarlos rsRed = estaRobertoCarlosAux rsRed (usuarios rsRed)
 
 --Funcion auxiliar para que cuente si la cantidad de amigos de cada usuario es mayor a 10
 estaRobertoCarlosAux :: RedSocial -> [Usuario] -> Bool
-estaRobertoCarlosAux rs us | us == [] = False
-                           | cantidadDeAmigos rs (head us) > 10 = True
-                           | otherwise = estaRobertoCarlosAux rs (tail us)
+estaRobertoCarlosAux rsRed us | us == [] = False
+                           | cantidadDeAmigos rsRed (head us) > 10 = True
+                           | otherwise = estaRobertoCarlosAux rsRed (tail us)
 
--- Toma un RedSocial un Usuario u y devuelve un [Publicacion]
--- de red social en las que u es el autor de cada Publicacion 
--- de [Publicacion]
--- Es decir, publicaciones escritas por u
+-- Toma un RedSocial y un Usuario u, devuelve un [Publicacion] de red social en las que u es el autor de cada Publicacion.
+-- Es decir, las publicaciones escritas por u.
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe rsRed uUsuario = eliminarRepetidos(publicacionesDe' (publicaciones rsRed) uUsuario)
+publicacionesDe rsRed uUsuario = eliminarRepetidos(publicacionesDeAux (publicaciones rsRed) uUsuario)
 
-publicacionesDe' :: [Publicacion] -> Usuario -> [Publicacion]
-publicacionesDe' [] _ = []
-publicacionesDe' (p:ps) uUsuario
-    | uUsuario == usuarioDePublicacion p = p:publicacionesDe' ps uUsuario
-    | otherwise                          = publicacionesDe' ps uUsuario
+publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
+publicacionesDeAux [] _ = []
+publicacionesDeAux (p:ps) uUsuario
+    | uUsuario == usuarioDePublicacion p = p:publicacionesDeAux ps uUsuario
+    | otherwise                          = publicacionesDeAux ps uUsuario
 
--- Toma un RedSocial, un Usuario y devuelve un [Publicacion], este lo devuelve la función auxiliar.
 -- Obtiene todas las publicaciones de la red y se lo envía a la función auxiliar junto al usuario.
 -- Esta luego devolverá las publicaciones que le gustan al usuario, sin repetidos
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA rsRed us = publicacionesQueLeGustanAAux (publicaciones rsRed) us
 -- eliminarRepetidos no es necesario, solo se pueden repetir si la red tiene la misma publicacion
--- repetida dos o mas veces, en tal caso, la red no es valida.
+-- repetida dos o mas veces, en tal caso, la red no es valida por las especificación.
 
 -- Toma una lista de publicaciones y un usuario.
 -- Si el usuario pertenece a la lista de usuarios que le dieron like a la publicacion, esta se agrega a la lista a devolver.
@@ -154,29 +149,30 @@ publicacionesQueLeGustanAAux (pub : pubs) us | pertenece us (likesDePublicacion 
     | otherwise                                                                      = publicacionesQueLeGustanAAux pubs us
 
 -- Toma un RedSocial, dos Usuarios y devuelve un Bool si a ambos les gustan las mismas publicaciones
--- A ambos les gustan las mismas publicaciones si la lista de publicaciones que le gustan al usuario1 está incluida en la lista de publicaciones que le gustan al usuario2,
--- y si la lista de publicaciones que le gustan al usuario2 está incluida en la lista de publicaciones que le gustan al usuario1
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones rsRed us1 us2 = lesGustanLasMismasPublicacionesAux (publicacionesQueLeGustanA rsRed us1) (publicacionesQueLeGustanA rsRed us2)
-    
+
+-- A ambos les gustan las mismas publicaciones si la lista de publicaciones que le gustan al usuario1 está incluida en la lista de publicaciones 
+-- que le gustan al usuario2, y viceversa.
 lesGustanLasMismasPublicacionesAux :: [Publicacion] -> [Publicacion] -> Bool    
 lesGustanLasMismasPublicacionesAux [] [] = True 
 lesGustanLasMismasPublicacionesAux likesUs1 likesUs2 = esSubconjunto likesUs1 likesUs2 && esSubconjunto likesUs2 likesUs1
 
 -- Toma un RedSocial y un usuario, y verifica que existe un Usuario u1 tal que:
--- u1 pertenece a todas las listas de usuarios de las publicaciones de otro
--- diferente usuario u2
+-- u1 pertenece a todas las listas de usuarios de las publicaciones de otro diferente usuario u2
 -- Es decir, u1 le dio me gusta a todas las publicaciones de u2
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel rsRed uUsuario = tieneUnSeguidorFiel' rsRed uUsuario (usuarios rsRed)
+tieneUnSeguidorFiel rsRed uUsuario = tieneUnSeguidorFielAux rsRed uUsuario (usuarios rsRed)
 
-tieneUnSeguidorFiel' :: RedSocial -> Usuario -> [Usuario] -> Bool
-tieneUnSeguidorFiel' _ _ [] = False
-tieneUnSeguidorFiel' rsRed uUsuario (u:us)
-    | publicacionesDe rsRed uUsuario == []                                               = False -- Siempre devolvia True si un usuario no tenia publicaciones, pues esSubconjunto [] [a,b,...] siempre devuelve True
-    | uUsuario == u                                                                      = tieneUnSeguidorFiel' rsRed uUsuario us
+-- Case publicacionesDe rsRed uUsuario == []:
+-- Siempre devolvia True si un usuario no tenia publicaciones, pues esSubconjunto [] [a,b,...] siempre devuelve True
+tieneUnSeguidorFielAux :: RedSocial -> Usuario -> [Usuario] -> Bool
+tieneUnSeguidorFielAux _ _ [] = False
+tieneUnSeguidorFielAux rsRed uUsuario (u:us)
+    | publicacionesDe rsRed uUsuario == []                                               = False
+    | uUsuario == u                                                                      = tieneUnSeguidorFielAux rsRed uUsuario us
     | esSubconjunto (publicacionesDe rsRed uUsuario) (publicacionesQueLeGustanA rsRed u) = True
-    | otherwise                                                                          = tieneUnSeguidorFiel' rsRed uUsuario us
+    | otherwise                                                                          = tieneUnSeguidorFielAux rsRed uUsuario us
     
 -- Verifica que TODOS los elementos de una lista A pertenecen a una lista B
 esSubconjunto :: (Eq t) => [t] -> [t] -> Bool
@@ -187,15 +183,15 @@ esSubconjunto (x:xs) (y:ys)
     | otherwise          = False
 
 -- Toma un redSocial y dos usuarios, y verifica si existe una cadena de amigos que relaciona
--- indirectamente a estos usuarios, por ejemplo:
+-- a estos usuarios, por ejemplo:
 -- U1 es amigo de U2, U2 es amigo de U3
 -- Si hacemos "existeSecuenciaDeAmigos <RedSocial> U1 U3", nos devolvera verdadero, pues hay
 -- una cadena de amigos entre U1 y U3
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rsRed uU1 uU2 = existeSecuenciaDeAmigos' (usuarios rsRed) uU1 uU2 rsRed
+existeSecuenciaDeAmigos rsRed uU1 uU2 = existeSecuenciaDeAmigosAux (usuarios rsRed) uU1 uU2 rsRed
 
-existeSecuenciaDeAmigos' :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
-existeSecuenciaDeAmigos' us uU1 uU2 rsRed
+existeSecuenciaDeAmigosAux :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
+existeSecuenciaDeAmigosAux us uU1 uU2 rsRed
     | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False
     | otherwise               = cadenaDeAmigos uU1 uU2 us rsRed
 
@@ -206,9 +202,9 @@ quitar x (y:ys)
     | x == y = ys
     | otherwise = y:quitar x ys
 
--- Toma una lista de usuarios liU y un RedSocial y verifica si existe una cadena de amigos entre
--- todos los Usuarios en liU.
--- Por ejemplo [U1, U2, U3, U4], si U1 esta relacionado con U2, U2 con U3 y U3 con U4, entonces
+-- Toma dos usuarios U0 y UN, una lista de usuarios liU y un RedSocial y verifica si existe una cadena de amigos empieza con U1
+-- termina con U2.
+-- Por ejemplo [U0, U1, U2, UN], si U0 esta relacionado con U1, U1 con U2 y U2 con UN, entonces
 -- devuelve verdadero.
 cadenaDeAmigos :: Usuario -> Usuario -> [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos u0 un [u1, u2] rsRed = relacionadosDirecto u1 u2 rsRed
@@ -226,7 +222,7 @@ cadenaDeAmigos u0 un (u1:u2:us) rsRed
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto uU1 uU2 rsRed = pertenece (uU1, uU2) (relaciones rsRed) || pertenece (uU2, uU1) (relaciones rsRed)
 
--- Verificia si por lo menos un elemento de una lista [t], pertenece a otra lista [t]
+-- Verifica si por lo menos un elemento de una lista [t], pertenece a otra lista [t]
 perteneceAlgunElemDe :: (Eq t) => [t] -> [t] -> Bool
 perteneceAlgunElemDe _ []    = False
 perteneceAlgunElemDe [] _    = False
