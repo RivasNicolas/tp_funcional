@@ -183,7 +183,7 @@ esSubconjunto (x:xs) (y:ys)
     | otherwise          = False
 
 -- Toma un redSocial y dos usuarios, y verifica si existe una cadena de amigos que relaciona
--- indirectamente a estos usuarios, por ejemplo:
+-- a estos usuarios, por ejemplo:
 -- U1 es amigo de U2, U2 es amigo de U3
 -- Si hacemos "existeSecuenciaDeAmigos <RedSocial> U1 U3", nos devolvera verdadero, pues hay
 -- una cadena de amigos entre U1 y U3
@@ -202,9 +202,9 @@ quitar x (y:ys)
     | x == y = ys
     | otherwise = y:quitar x ys
 
--- Toma una lista de usuarios liU y un RedSocial y verifica si existe una cadena de amigos entre
--- todos los Usuarios en liU.
--- Por ejemplo [U1, U2, U3, U4], si U1 esta relacionado con U2, U2 con U3 y U3 con U4, entonces
+-- Toma dos usuarios U0 y UN, una lista de usuarios liU y un RedSocial y verifica si existe una cadena de amigos empieza con U1
+-- termina con U2.
+-- Por ejemplo [U0, U1, U2, UN], si U0 esta relacionado con U1, U1 con U2 y U2 con UN, entonces
 -- devuelve verdadero.
 cadenaDeAmigos :: Usuario -> Usuario -> [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos u0 un [u1, u2] rsRed = relacionadosDirecto u1 u2 rsRed
