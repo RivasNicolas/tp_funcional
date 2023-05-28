@@ -206,13 +206,12 @@ quitar x (y:ys)
 -- Por ejemplo [U0, U1, U2, UN], si U0 esta relacionado con U1, U1 con U2 y U2 con UN, entonces
 -- devuelve verdadero.
 cadenaDeAmigos :: [Usuario] -> Usuario -> RedSocial -> [Usuario] -> Bool
-cadenaDeAmigos [] _ _ _ = False
 cadenaDeAmigos [amU1] un rsRed _ = (relacionadosDirecto amU1 un rsRed || interseccion (amigosDe rsRed amU1) (amigosDe rsRed un))
 cadenaDeAmigos (amU1:amU1s) un rsRed yaTesteado
     | pertenece amU1 yaTesteado = cadenaDeAmigos amU1s un rsRed yaTesteado
     | (cantidadDeAmigos rsRed amU1) == 1                                            = cadenaDeAmigos amU1s un rsRed (yaTesteado ++ [amU1])
     | cadenaDeAmigos (amigosDe rsRed amU1) un rsRed (yaTesteado ++ [amU1]) == False = cadenaDeAmigos amU1s un rsRed (yaTesteado ++ [amU1])
-    | otherwise                                                                     = cadenaDeAmigos (amigosDe rsRed amU1) un rsRed (yaTesteado ++ [amU1])
+    | otherwise                                                                     = True
 
 
 -- Toma dos usuarios U1, U2 y toma una RedSocial y verifica si existe, una dupla Relación
