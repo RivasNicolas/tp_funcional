@@ -46,7 +46,7 @@ nombresDeUsuarios rsRed = eliminarRepetidos (proyectarNombres (usuarios rsRed))
 proyectarNombres :: [Usuario] -> [String]
 proyectarNombres []     = [] 
 proyectarNombres [u]    = [nombreDeUsuario u]
-proyectarNombres (u:us) = [nombreDeUsuario u] ++ proyectarNombres us
+proyectarNombres (u:us) = nombreDeUsuario u : proyectarNombres us
 
 -- eliminarRepetidos: Toma una lista de algun tipo
 -- y la devuelve pero cada elemento aparece una única vez.
@@ -54,7 +54,7 @@ eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos []  = []
 eliminarRepetidos [x] = [x]
 eliminarRepetidos (x:xs)
-    | not (tieneRepetidos (x:xs)) = (x:xs)
+    | not (tieneRepetidos (x:xs)) = x:xs
     | pertenece x xs              = eliminarRepetidos xs
     | otherwise                   = x:eliminarRepetidos xs
     
@@ -82,10 +82,6 @@ amigosDe rsRed uUsuario = amigosDeAux (relaciones rsRed) uUsuario
 
 amigosDeAux :: [Relacion] -> Usuario -> [Usuario]
 amigosDeAux [] _ = []
-amigosDeAux [(u1,u2)] uUsuario
-    | uUsuario == u1 = [u2]
-    | uUsuario == u2 = [u1]
-    | otherwise      = []
 amigosDeAux ((u1,u2):rRelaciones) uUsuario
     | uUsuario == u1 = u2:amigosDeAux rRelaciones uUsuario
     | uUsuario == u2 = u1:amigosDeAux rRelaciones uUsuario
@@ -106,10 +102,20 @@ usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos rsRed = comparadorDeAmigos rsRed (usuarios rsRed)
 
 -- Hago una funcion auxiliar para comparar la cantidad de amigos de cada usuario y ver cual tiene mas
+{-
 comparadorDeAmigos :: RedSocial -> [Usuario] -> Usuario
 comparadorDeAmigos _ [x] = x
-comparadorDeAmigos rsRed (x:xs) | (cantidadDeAmigos rsRed x) >= cantidadDeAmigos rsRed (comparadorDeAmigos rsRed xs) = x
-                             | otherwise = comparadorDeAmigos rsRed xs
+comparadorDeAmigos rsRed (x:xs) 
+                            | (cantidadDeAmigos rsRed x) >= cantidadDeAmigos rsRed (comparadorDeAmigos rsRed xs) = x
+                            | otherwise = comparadorDeAmigos rsRed xs
+-}
+-- Simplificada
+comparadorDeAmigos :: RedSocial -> [Usuario] -> Usuario
+comparadorDeAmigos _ [x] = x
+comparadorDeAmigos rsRed (x:y:xs) 
+                            | cantidadDeAmigosDe x >= cantidadDeAmigosDe y = comparadorDeAmigos rsRed (x:xs)
+                            | otherwise                                    = comparadorDeAmigos rsRed (y:xs)
+                            where cantidadDeAmigosDe x = cantidadDeAmigos rsRed x
 
 -- Determina si es que hay un usuario en la red social que tenga más de 10 amigos exactamente
 estaRobertoCarlos :: RedSocial -> Bool
@@ -118,13 +124,13 @@ estaRobertoCarlos rsRed = estaRobertoCarlosAux rsRed (usuarios rsRed)
 --Funcion auxiliar para que cuente si la cantidad de amigos de cada usuario es mayor a 10
 estaRobertoCarlosAux :: RedSocial -> [Usuario] -> Bool
 estaRobertoCarlosAux rsRed us | us == [] = False
-                           | cantidadDeAmigos rsRed (head us) > 10 = True
-                           | otherwise = estaRobertoCarlosAux rsRed (tail us)
+                              | cantidadDeAmigos rsRed (head us) > 10 = True
+                              | otherwise = estaRobertoCarlosAux rsRed (tail us)
 
 -- Toma un RedSocial y un Usuario u, devuelve un [Publicacion] de red social en las que u es el autor de cada Publicacion.
 -- Es decir, las publicaciones escritas por u.
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe rsRed uUsuario = eliminarRepetidos(publicacionesDeAux (publicaciones rsRed) uUsuario)
+publicacionesDe rsRed uUsuario = publicacionesDeAux (publicaciones rsRed) uUsuario
 
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] _ = []
@@ -143,10 +149,12 @@ publicacionesQueLeGustanA rsRed us = publicacionesQueLeGustanAAux (publicaciones
 -- Si el usuario pertenece a la lista de usuarios que le dieron like a la publicacion, esta se agrega a la lista a devolver.
 publicacionesQueLeGustanAAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesQueLeGustanAAux [] _ = []
-publicacionesQueLeGustanAAux [pub] us | pertenece us (likesDePublicacion pub) = [pub]
-    | otherwise                                                               = []
-publicacionesQueLeGustanAAux (pub : pubs) us | pertenece us (likesDePublicacion pub) = pub : publicacionesQueLeGustanAAux pubs us
-    | otherwise                                                                      = publicacionesQueLeGustanAAux pubs us
+publicacionesQueLeGustanAAux [pub] us 
+    | pertenece us (likesDePublicacion pub) = [pub]
+    | otherwise                             = []
+publicacionesQueLeGustanAAux (pub : pubs) us 
+    | pertenece us (likesDePublicacion pub) = pub : publicacionesQueLeGustanAAux pubs us
+    | otherwise                             = publicacionesQueLeGustanAAux pubs us
 
 -- Toma un RedSocial, dos Usuarios y devuelve un Bool si a ambos les gustan las mismas publicaciones
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
@@ -162,17 +170,20 @@ lesGustanLasMismasPublicacionesAux likesUs1 likesUs2 = esSubconjunto likesUs1 li
 -- u1 pertenece a todas las listas de usuarios de las publicaciones de otro diferente usuario u2
 -- Es decir, u1 le dio me gusta a todas las publicaciones de u2
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel rsRed uUsuario = tieneUnSeguidorFielAux rsRed uUsuario (usuarios rsRed)
+tieneUnSeguidorFiel rsRed uUsuario
+    | publicacionesDe rsRed uUsuario == [] = False
+    | otherwise = tieneUnSeguidorFielAux rsRed uUsuario (usuarios rsRed)
+
 
 -- Case publicacionesDe rsRed uUsuario == []:
 -- Siempre devolvia True si un usuario no tenia publicaciones, pues esSubconjunto [] [a,b,...] siempre devuelve True
 tieneUnSeguidorFielAux :: RedSocial -> Usuario -> [Usuario] -> Bool
 tieneUnSeguidorFielAux _ _ [] = False
 tieneUnSeguidorFielAux rsRed uUsuario (u:us)
-    | publicacionesDe rsRed uUsuario == []                                               = False
-    | uUsuario == u                                                                      = tieneUnSeguidorFielAux rsRed uUsuario us
-    | esSubconjunto (publicacionesDe rsRed uUsuario) (publicacionesQueLeGustanA rsRed u) = True
-    | otherwise                                                                          = tieneUnSeguidorFielAux rsRed uUsuario us
+    | uUsuario == u                                = tieneUnSeguidorFielAux rsRed uUsuario us
+    | u `leGustanTodasLasPublicacionesDe` uUsuario = True
+    | otherwise                                    = tieneUnSeguidorFielAux rsRed uUsuario us
+    where leGustanTodasLasPublicacionesDe x y = esSubconjunto (publicacionesDe rsRed y) (publicacionesQueLeGustanA rsRed x)
     
 -- Verifica que TODOS los elementos de una lista A pertenecen a una lista B
 esSubconjunto :: (Eq t) => [t] -> [t] -> Bool
@@ -189,30 +200,30 @@ esSubconjunto (x:xs) (y:ys)
 -- una cadena de amigos entre U1 y U3
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos rsRed uU1 uU2
-    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False  = False
-    | (cantidadDeAmigos rsRed uU1 == 0 || cantidadDeAmigos rsRed uU2 == 0) == True = False
-    | (relacionadosDirecto uU1 uU2 rsRed) == True                                  = True
-    | otherwise = cadenaDeAmigos (amigosDe rsRed uU1) uU2 rsRed [uU1]
+    | not (perteneceALaRed uU1 || perteneceALaRed uU2) = False
+    | noTieneAmigos uU1 || noTieneAmigos uU2           = False
+    | sonAmigos uU1 uU2 || tienenAmigosEnComun uU1 uU2 = True
+    | otherwise                                        = cadenaDeAmigos (amigosDe rsRed uU1) uU2 rsRed [uU1]
+    where perteneceALaRed x       = pertenece x (usuarios rsRed)
+          noTieneAmigos x         = cantidadDeAmigos rsRed x == 0
+          sonAmigos x y           = relacionadosDirecto x y rsRed
+          tienenAmigosEnComun x y = interseccion (amigosDe rsRed x) (amigosDe rsRed y)
 
--- Borra el primer t (empezando desde la izquierda).
-quitar :: (Eq t) => t -> [t] -> [t]
-quitar _ [] = []
-quitar x (y:ys)
-    | x == y = ys
-    | otherwise = y:quitar x ys
 
--- Toma dos usuarios U0 y UN, una lista de usuarios liU y un RedSocial y verifica si existe una cadena de amigos empieza con U1
--- termina con U2.
--- Por ejemplo [U0, U1, U2, UN], si U0 esta relacionado con U1, U1 con U2 y U2 con UN, entonces
--- devuelve verdadero.
+-- Toma una lista de amigos de algun U0 un usuario UN, un redSocial y una lista de usuarios
+-- Y verifica si alguno de los amigos de U0 tiene amigos en comun o es amigo de UN
 cadenaDeAmigos :: [Usuario] -> Usuario -> RedSocial -> [Usuario] -> Bool
 cadenaDeAmigos [] _ _ _ = False
 cadenaDeAmigos (amU1:amU1s) un rsRed yaTesteado
-    | pertenece amU1 yaTesteado                                            = cadenaDeAmigos amU1s un rsRed yaTesteado
-    | (cantidadDeAmigos rsRed amU1) == 1                                   = cadenaDeAmigos amU1s un rsRed (yaTesteado ++ [amU1])
-    | (relacionadosDirecto amU1 un rsRed || interseccion (amigosDe rsRed amU1) (amigosDe rsRed un)) = True
-    | cadenaDeAmigos (amigosDe rsRed amU1) un rsRed (yaTesteado ++ [amU1]) = True
-    | otherwise                                                            = cadenaDeAmigos amU1s un rsRed (yaTesteado ++ [amU1])
+    | yaFueTesteado amU1                                              = cadenaDeAmigos amU1s un rsRed yaTesteado
+    | tieneUnSoloAmigo amU1                                           = cadenaDeAmigos amU1s un rsRed (amU1:yaTesteado)
+    | sonAmigos amU1 un || tienenAmigosEnComun amU1 un                = True
+    | cadenaDeAmigos (amigosDe rsRed amU1) un rsRed (amU1:yaTesteado) = True
+    | otherwise                                                       = cadenaDeAmigos amU1s un rsRed (amU1:yaTesteado)
+    where yaFueTesteado x         = pertenece x yaTesteado
+          tieneUnSoloAmigo x      = cantidadDeAmigos rsRed x == 1
+          sonAmigos x y           = relacionadosDirecto x y rsRed
+          tienenAmigosEnComun x y = interseccion (amigosDe rsRed x) (amigosDe rsRed y)
 
 
 -- Toma dos usuarios U1, U2 y toma una RedSocial y verifica si existe, una dupla Relación
