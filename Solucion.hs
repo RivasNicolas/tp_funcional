@@ -188,12 +188,11 @@ esSubconjunto (x:xs) (y:ys)
 -- Si hacemos "existeSecuenciaDeAmigos <RedSocial> U1 U3", nos devolvera verdadero, pues hay
 -- una cadena de amigos entre U1 y U3
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rsRed uU1 uU2 = existeSecuenciaDeAmigosAux (usuarios rsRed) uU1 uU2 rsRed
-
-existeSecuenciaDeAmigosAux :: [Usuario] -> Usuario -> Usuario -> RedSocial -> Bool
-existeSecuenciaDeAmigosAux us uU1 uU2 rsRed
-    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False = False
-    | otherwise               = cadenaDeAmigos uU1 uU2 us rsRed
+existeSecuenciaDeAmigos rsRed uU1 uU2
+    | (pertenece uU1 (usuarios rsRed) && pertenece uU2 (usuarios rsRed)) == False  = False
+    | (cantidadDeAmigos rsRed uU1 == 0 || cantidadDeAmigos rsRed uU2 == 0) == True = False
+    | (relacionadosDirecto uU1 uU2 rsRed) == True                                  = True
+    | otherwise = cadenaDeAmigos (amigosDe rsRed uU1) uU2 rsRed [uU1]
 
 -- Borra el primer t (empezando desde la izquierda).
 quitar :: (Eq t) => t -> [t] -> [t]
@@ -206,28 +205,27 @@ quitar x (y:ys)
 -- termina con U2.
 -- Por ejemplo [U0, U1, U2, UN], si U0 esta relacionado con U1, U1 con U2 y U2 con UN, entonces
 -- devuelve verdadero.
-cadenaDeAmigos :: Usuario -> Usuario -> [Usuario] -> RedSocial -> Bool
-cadenaDeAmigos u0 un [u1, u2] rsRed = relacionadosDirecto u1 u2 rsRed
-cadenaDeAmigos u0 un (u1:u2:us) rsRed
-    | cantidadDeAmigos rsRed u1 == 0  = False
-    | not (perteneceAlgunElemDe (amigosDe rsRed u2) us) && relacionadosDirecto u1 u2 rsRed && u1 == u0 = False
-    | not (perteneceAlgunElemDe (amigosDe rsRed u1) us) && relacionadosDirecto u1 u2 rsRed && u2 == un = False
-    | not (perteneceAlgunElemDe (amigosDe rsRed u2) us) && relacionadosDirecto u1 u2 rsRed             = cadenaDeAmigos u0 un (u1:us) rsRed
-    | relacionadosDirecto u1 u2 rsRed && u2 == un                                                      = cadenaDeAmigos u0 un (u1:us) rsRed
-    | relacionadosDirecto u1 u2 rsRed                                                                  = cadenaDeAmigos u0 un (u2:us) rsRed
-    | otherwise                                                                                        = cadenaDeAmigos u0 un ((u1:us) ++ [u2]) rsRed
- 
+cadenaDeAmigos :: [Usuario] -> Usuario -> RedSocial -> [Usuario] -> Bool
+cadenaDeAmigos [] _ _ _ = False
+cadenaDeAmigos [amU1] un rsRed _ = (relacionadosDirecto amU1 un rsRed || interseccion (amigosDe rsRed amU1) (amigosDe rsRed un))
+cadenaDeAmigos (amU1:amU1s) un rsRed yaTesteado
+    | pertenece amU1 yaTesteado = cadenaDeAmigos amU1s un rsRed yaTesteado
+    | (cantidadDeAmigos rsRed amU1) == 1                                            = cadenaDeAmigos amU1s un rsRed (yaTesteado ++ [amU1])
+    | cadenaDeAmigos (amigosDe rsRed amU1) un rsRed (yaTesteado ++ [amU1]) == False = cadenaDeAmigos amU1s un rsRed (yaTesteado ++ [amU1])
+    | otherwise                                                                     = cadenaDeAmigos (amigosDe rsRed amU1) un rsRed (yaTesteado ++ [amU1])
+
+
 -- Toma dos usuarios U1, U2 y toma una RedSocial y verifica si existe, una dupla Relación
 -- en RedSocial que contiene U1 y U2 como sus elementos.
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto uU1 uU2 rsRed = pertenece (uU1, uU2) (relaciones rsRed) || pertenece (uU2, uU1) (relaciones rsRed)
 
 -- Verifica si por lo menos un elemento de una lista [t], pertenece a otra lista [t]
-perteneceAlgunElemDe :: (Eq t) => [t] -> [t] -> Bool
-perteneceAlgunElemDe _ []    = False
-perteneceAlgunElemDe [] _    = False
-perteneceAlgunElemDe [x] liY = pertenece x liY
-perteneceAlgunElemDe (x:xs) liY
+interseccion :: (Eq t) => [t] -> [t] -> Bool
+interseccion _ []    = False
+interseccion [] _    = False
+interseccion [x] liY = pertenece x liY
+interseccion (x:xs) liY
     | pertenece x liY = True
-    | otherwise       = perteneceAlgunElemDe xs liY
+    | otherwise       = interseccion xs liY
     
