@@ -200,12 +200,10 @@ esSubconjunto (x:xs) (y:ys)
 -- una cadena de amigos entre U1 y U3
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos rsRed uU1 uU2
-    | not (perteneceALaRed uU1 || perteneceALaRed uU2) = False
     | noTieneAmigos uU1 || noTieneAmigos uU2           = False
     | sonAmigos uU1 uU2 || tienenAmigosEnComun uU1 uU2 = True
     | otherwise                                        = cadenaDeAmigos (amigosDe rsRed uU1) uU2 rsRed [uU1]
-    where perteneceALaRed x       = pertenece x (usuarios rsRed)
-          noTieneAmigos x         = cantidadDeAmigos rsRed x == 0
+    where noTieneAmigos x         = cantidadDeAmigos rsRed x == 0
           sonAmigos x y           = relacionadosDirecto x y rsRed
           tienenAmigosEnComun x y = interseccion (amigosDe rsRed x) (amigosDe rsRed y)
 

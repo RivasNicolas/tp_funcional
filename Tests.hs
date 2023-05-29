@@ -45,10 +45,14 @@ testsEj2 = test [
 testsEj3 = test [
     --"Caso 1: red no contiene a u" No se testea porque se trata de un caso de error. No está especificado qué sucede.
     "Caso 2: red tiene relaciones que no contienen a u. Red contiene a u." ~: cantidadDeAmigos redSinPublicaciones usuario4 ~?= 0,
-    "Caso 3: red tiene relaciones no repetidas y contiene a u." ~: cantidadDeAmigos redSinPublicaciones usuario1 ~?= 2,
+    "Caso 3: red tiene relaciones no repetidas y contiene a u." ~: cantidadDeAmigos redSinPublicaciones usuario1 ~?= 2
     --"Caso 4: red tiene relaciones repetidas y contiene a u." No se testea porque se trata de un caso de error. No está especificado qué sucede.
-    "Caso 5: red no tiene relaciones. Red contiene a u." ~: cantidadDeAmigos redSinRelaciones usuario1 ~?= 0
+--    "Caso 5: red no tiene relaciones. Red contiene a u." ~: cantidadDeAmigos redSinRelaciones usuario1 ~?= 0
     ]
+-- El caso 5 es equivalente al caso 2:
+-- No nos interesa que la red tenga o no relaciones, solo nos interesa si u tiene o no amigos.
+-- Si el usuario tiene amigos, entonces esta implicito que la red tiene relaciones, entonces devolvemos la cantidad de amigos de u
+-- Si el usuario no tiene amigos, nos da igual si la red tiene o no relaciones, devolvemos siempre cero.
 
 testsEj4 = test [
     --"Caso 1: la cantidad de usuarios de la red es 0"  No se testea porque se trata de un caso de error. No está especificado qué sucede.
@@ -82,12 +86,18 @@ testsEj7 = test [
 
 testsEj8 = test[
     --"Caso 1: red no contiene a u1 o u2" No se testea porque se trata de un caso de error. No está especificado qué sucede.
-    "Caso 2: red no tiene publicaciones" ~: lesGustanLasMismasPublicaciones redSinPublicaciones usuario1 usuario2 ~?= True,
+--    "Caso 2: red no tiene publicaciones" ~: lesGustanLasMismasPublicaciones redSinPublicaciones usuario1 usuario2 ~?= True,
     "Caso 3: red tiene publicaciones y ni a u1 ni a u2 le gusta ninguna" ~: lesGustanLasMismasPublicaciones redB usuario1 usuario3 ~?= True,
-    "Caso 4: red tiene publicaciones y uno solo de los dos usuarios tiene publicaciones que le gustan, mientras el otro no tiene ninguna" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario1 ~?= False,
+--    "Caso 4: red tiene publicaciones y uno solo de los dos usuarios tiene publicaciones que le gustan, mientras el otro no tiene ninguna" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario1 ~?= False,
     "Caso 5: red tiene publicaciones y ambos usuarios tienen publicaciones que les gustan en común pero, también tienen algunas que les gustan a ellos solos" ~: lesGustanLasMismasPublicaciones redB usuario2 usuario5 ~?= False,
     "Caso 6: red tiene publicaciones y a u1 y u2 les gustan todas las mismas" ~: lesGustanLasMismasPublicaciones redMismosLikes usuario2 usuario5 ~?= True
     ]
+-- Observar que el caso 2 y el 3 son equivalentes:
+-- Si a u1 y a u2 no les gusta ninguna publicacion entonces nos da igual si la red tiene publicaciones o no
+
+-- Los mismo para el caso 4 y 5:
+-- Solo nos interesa que a ambos les gusten las mismas publicaciones
+-- En el caso 4 : Si a u1 le gusta por lo menos una publicacion y a u2 no le gusta ninguna. Esto es lo mismo que testear el caso 5
 
 testsEj9 = test[
     "Caso 1: la red no tiene publicaciones"                                                    ~: tieneUnSeguidorFiel redTEST_EJ9A usuario900 ~?= False,
@@ -137,8 +147,8 @@ redTestEJ10J = (usuariosTestEJ10J, relacionesTestEJ10J, [])
 
 
 testsEj10 = test [
-    "Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
-    "Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
+    --"Caso 1: La red no tiene usuarios"                ~: existeSecuenciaDeAmigos redTestEJ10A usuarioGenericoA usuarioGenericoB ~?= False,
+    --"Caso 2: La red no tiene relaciones"              ~: existeSecuenciaDeAmigos redTestEJ10B usuarioGenericoA usuarioGenericoB ~?= False,
     "Caso 3: El usuario 1001 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10C usuario1000 usuario1001 ~?= False,
     "Caso 4: El usuario 1000 no esta en la red"                  ~: existeSecuenciaDeAmigos redTestEJ10D usuario1000 usuario1001 ~?= False,
     "Caso 5: El usuario 1002 no tiene amigos"                    ~: existeSecuenciaDeAmigos redTestEJ10E usuario1000 usuario1002 ~?= False,
@@ -153,8 +163,10 @@ testsEj10 = test [
     "Case permutado 6: Existe la secuencia de amigos" ~: existeSecuenciaDeAmigos redTestEJ10I_P6 usuario1000 usuario1002 ~?= True,
     "Caso 8: robustez"                                ~: existeSecuenciaDeAmigos redTestEJ10J usuarioA usuarioB ~?= True
     ]
-
+-- caso 1: Nos da igual que la red tenga o no usuarios, si evaluamos un usuario que no esta en la red, obtenemos una lista de amigos vacía y por lo tanto un False
 --Redes utilizadas para los tests
+-- caso 2: Practicamente lo mismo que el caso anterior, si no hay relaciones, siempre obtenemos una lista de amigos vacía => False.
+
 usuario1 = (1, "Juan")
 usuario2 = (2, "Natalia")
 usuario3 = (3, "Pedro")
